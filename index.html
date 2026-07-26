@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Fpl Transfer Forslag",
+  "schemaVersion": 1,
+  "description": "FPL transfermodell for Øyvinds lag \"Sasasa-kameratene\" (lag-ID 1037413). Viser laget hans (redigerbart, lagres lokalt), en spillerdatabase hentet fra FPL sitt API, og før-sesong-tips. Oppdateres ukentlig med ferske transferforslag basert på faktiske gameweek-resultater etter sesongstart 21. august 2026."
+}
+</script>
 <html lang="no">
 <head>
 <meta charset="UTF-8">
@@ -254,10 +260,11 @@
 </div>
 
 <div class="data-note">
-  <strong>Om spillerdatabasen:</strong> Jeg sjekket FPL sitt API på nytt nå. Det eksponerer foreløpig kun 19 spillere
-  totalt (hele Arsenal-troppen, ingen spisser) av de 20 klubbene som finnes — resten av Premier League-troppene er
-  ikke lagt inn i FPL sitt system ennå så tidlig i overgangsvinduet. Det er en begrensning i selve datakilden, ikke
-  noe jeg kan hente rundt akkurat nå. Den ukentlige jobben sjekker automatisk om flere spillere/klubber dukker opp
+  <strong>Om spillerdatabasen:</strong> Sjekket FPL sitt API på nytt 26. juli 2026 — uendret siden forrige sjekk.
+  Det eksponerer foreløpig kun 19 spillere totalt (hele Arsenal-troppen, ingen spisser) av de 20 klubbene som
+  finnes — resten av Premier League-troppene er ikke lagt inn i FPL sitt system ennå så tidlig i overgangsvinduet.
+  Det er en begrensning i selve datakilden, ikke noe jeg kan hente rundt akkurat nå. Entry-en din (1037413) har
+  fortsatt ingen picks registrert. Den ukentlige jobben sjekker automatisk om flere spillere/klubber dukker opp
   og fyller inn databasen fortløpende. Frem til da: bruk "skriv inn manuelt" for spillere fra andre klubber.
 </div>
 
@@ -291,7 +298,9 @@
   <div class="data-note" style="margin-bottom:16px;">
     Denne fanen viser mitt forslag til beste lag for <strong>kommende gameweek</strong>, satt sammen fra eksterne
     FPL-ekspertkilder (se kilder nederst i "Eksperttips"). Oppdateres automatisk hver tirsdag av den ukentlige
-    jobben, sammen med resten av dashbordet.
+    jobben, sammen med resten av dashbordet. Sist gjennomgått 26. juli 2026 — bekreftet uendret mot
+    fantasyfootballhub.co.uk og allaboutfpl.com i tillegg til tidligere kilder, så forslaget under står fast frem
+    til nye Scout-anbefalinger eller oppkjøringskamp-resultater dukker opp.
   </div>
   <div class="card">
     <h2>⭐ Ukens lag — forslag til 21. august (3-4-3)</h2>
@@ -305,21 +314,21 @@
     <table>
       <thead><tr><th>Rolle</th><th>Pos</th><th>Spiller</th><th>Klubb</th><th>Pris</th><th>Vurdering</th><th>Begrunnelse</th></tr></thead>
       <tbody>
-        <tr><td>Start</td><td>GKP</td><td>Antonin Kinski</td><td>Spurs</td><td>£4.5m</td><td><span class="badge ok">5/6</span></td><td>Beste budsjett-keeper; Spurs slapp færrest store sjanser etter GW32 i fjor</td></tr>
-        <tr><td>Start</td><td>DEF</td><td>Gabriel</td><td>Arsenal</td><td>£8.0m</td><td><span class="badge ok">6/6</span></td><td>209 poeng, 18 clean sheets i fjor; Arsenal møter kun ett topp-6-lag i første 8 runder</td></tr>
-        <tr><td>Start</td><td>DEF</td><td>Harry Maguire</td><td>Man Utd</td><td>£5.0m</td><td><span class="badge ok">4/6</span></td><td>Billig, dødball-trussel, møter Hull/Ipswich tidlig — men rotasjonsrisiko over tid</td></tr>
-        <tr><td>Start</td><td>DEF</td><td>Arsenal-forsvarer (Calafiori/Hincapié/Mosquera/White)</td><td>Arsenal</td><td>£5.5m</td><td><span class="badge neg">3/6</span></td><td>Saliba skadet og en av disse tar trolig plassen — men usikkert hvem før oppkjøringskampene er ferdig</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Bruno Fernandes</td><td>Man Utd</td><td>£12.0m</td><td><span class="badge ok">5/6</span></td><td>Straffer/dødballer, møter Hull + Ipswich først — men dyrest i troppen relativt til usikker avkastning</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Matheus Cunha</td><td>Man Utd</td><td>£8.0m</td><td><span class="badge pos">4/6</span></td><td>Dobler opp på Man Utds gode åpning; bedre avslutning enn Mbeumo siste 7 kamper i fjor</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Anton Stach</td><td>Leeds</td><td>£6.0m</td><td><span class="badge pos">4/6</span></td><td>5 mål + 6 assists tross skadeavbrekk i fjor; snill åpning for Leeds</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Granit Xhaka</td><td>Sunderland</td><td>£5.5m</td><td><span class="badge pos">4/6</span></td><td>1 mål, 6 assists, 26 DC-poeng; snill åpning (Ipswich, Fulham)</td></tr>
-        <tr><td>Start · <strong>Kaptein</strong></td><td>FWD</td><td>Erling Haaland</td><td>Man City</td><td>£15.5m</td><td><span class="badge ok">6/6</span></td><td>Beste tidlige kampplan i troppen, 71% eierskap — tryggeste kapteinsvalg</td></tr>
-        <tr><td>Start</td><td>FWD</td><td>Joao Pedro</td><td>Chelsea</td><td>£7.5m</td><td><span class="badge ok">5/6</span></td><td>Mest populære spiss ved siden av Haaland (45%); snill åpning mot Fulham/Brighton/Hull</td></tr>
-        <tr><td>Start</td><td>FWD</td><td>William Osula</td><td>Newcastle</td><td>£6.0m</td><td><span class="badge neg">3/6</span></td><td>Startet siste 7 kamper i fjor og scoret 5 — men ennå ikke garantert førstevalg</td></tr>
+        <tr><td>Start</td><td>GKP</td><td>Antonin Kinski</td><td>Spurs</td><td>£4.5m</td><td><span class="badge ok">5/6</span></td><td>Beste budsjett-keeper; Spurs slapp færrest store sjanser etter GW32 i fjor. Vicario ryktes bort, Dubravka (£4.0m) som billig back-up gir £8.5m totalt på keeperplassene</td></tr>
+        <tr><td>Start</td><td>DEF</td><td>Gabriel</td><td>Arsenal</td><td>£8.0m</td><td><span class="badge ok">6/6</span></td><td>209 poeng, 18 clean sheets i fjor — minst 30 mer enn noen annen forsvarsspiller; Arsenal møter kun ett topp-6-lag i første 8 runder. Vurder å doble opp med Raya i mål</td></tr>
+        <tr><td>Start</td><td>DEF</td><td>Harry Maguire</td><td>Man Utd</td><td>£5.0m</td><td><span class="badge ok">4/6</span></td><td>Billig, beste DC-forsvarer på Man Utd i fjor, dødball-trussel, møter Hull/Ipswich tidlig — men rotasjonsrisiko over tid</td></tr>
+        <tr><td>Start</td><td>DEF</td><td>Arsenal-forsvarer (Calafiori/Hincapié/Mosquera/White)</td><td>Arsenal</td><td>£5.5m</td><td><span class="badge neg">3/6</span></td><td>Saliba ute i en lengre periode (ryggskade, ingen bekreftet returdato) og en av disse tar trolig plassen — Calafiori er plassholder i Scout-laget, men usikkert hvem før oppkjøringskampene er ferdig</td></tr>
+        <tr><td>Start</td><td>MID</td><td>Bruno Fernandes</td><td>Man Utd</td><td>£12.0m</td><td><span class="badge ok">5/6</span></td><td>Straffer/dødballer, møter Hull + Ipswich først — dyrest i troppen (pris opp £3m fra i fjor sammen med Haaland/Gabriel-trioen), så resten av budsjettet må strekkes</td></tr>
+        <tr><td>Start</td><td>MID</td><td>Matheus Cunha</td><td>Man Utd</td><td>£8.0m</td><td><span class="badge pos">4/6</span></td><td>Dobler opp på Man Utds gode åpning; mer enn dobbelt så mange scoringspoeng som Mbeumo over lagets siste 7 kamper i fjor, samme pris</td></tr>
+        <tr><td>Start</td><td>MID</td><td>Anton Stach</td><td>Leeds</td><td>£6.0m</td><td><span class="badge pos">4/6</span></td><td>5 mål + 6 assists + 20 DC-poeng tross skadeavbrekk i fjor; Leeds unngår alle fjorårets topp 7 i de første 5 kampene</td></tr>
+        <tr><td>Start</td><td>MID</td><td>Granit Xhaka</td><td>Sunderland</td><td>£5.5m</td><td><span class="badge pos">4/6</span></td><td>1 mål, 6 assists, 26 DC-poeng; snill åpning (Ipswich borte, Fulham hjemme) i GW1-2</td></tr>
+        <tr><td>Start · <strong>Kaptein</strong></td><td>FWD</td><td>Erling Haaland</td><td>Man City</td><td>£15.5m</td><td><span class="badge ok">6/6</span></td><td>Beste tidlige kampplan i troppen (Bournemouth/Crystal Palace/Coventry), 71% eierskap etter de første 24 timene — klart tryggeste kapteinsvalg</td></tr>
+        <tr><td>Start</td><td>FWD</td><td>Joao Pedro</td><td>Chelsea</td><td>£7.5m</td><td><span class="badge ok">5/6</span></td><td>Mest populære spiss ved siden av Haaland (45% eierskap); snill åpning mot Fulham/Brighton/Hull under Xabi Alonso</td></tr>
+        <tr><td>Start</td><td>FWD</td><td>William Osula</td><td>Newcastle</td><td>£6.0m</td><td><span class="badge neg">3/6</span></td><td>Startet siste 7 kamper i fjor og scoret 5 — Newcastle møter kun 3 av fjorårets topp 10 i første 10 runder, men spissplassen er ennå ikke garantert</td></tr>
         <tr><td>Benk</td><td>GKP</td><td>Martin Dubravka</td><td>Spurs</td><td>£4.0m</td><td><span class="badge inj">1/6</span></td><td>Ren backup — kun aktuell hvis Kinski/Vicario-situasjonen endrer seg</td></tr>
-        <tr><td>Benk</td><td>DEF</td><td>Charlie Hughes</td><td>Hull</td><td>£4.0m</td><td><span class="badge neg">2/6</span></td><td>Flest CBIT/90 blant nyopprykkede forsvarsspillere, men Hull har tøff åpning</td></tr>
-        <tr><td>Benk</td><td>DEF</td><td>Bobby Thomas</td><td>Coventry</td><td>£4.0m</td><td><span class="badge neg">2/6</span></td><td>3 mål/4 assists i Championship, men Coventry møter Arsenal og Man City tidlig</td></tr>
-        <tr><td>Benk</td><td>MID</td><td>Regan Slater</td><td>Hull</td><td>£4.5m</td><td><span class="badge inj">1/6</span></td><td>Usikkert om han sikrer fast plass — ren budsjett-fyll til benken</td></tr>
+        <tr><td>Benk</td><td>DEF</td><td>Charlie Hughes</td><td>Hull</td><td>£4.0m</td><td><span class="badge neg">2/6</span></td><td>11,8 CBIT/90 i Championship i fjor — flest blant nyopprykkede forsvarsspillere — men Hull har tøff åpning (Man Utd, Villa, Chelsea, Newcastle)</td></tr>
+        <tr><td>Benk</td><td>DEF</td><td>Bobby Thomas</td><td>Coventry</td><td>£4.0m</td><td><span class="badge neg">2/6</span></td><td>3 mål/4 assists + 8,6 CBIT/90 i Championship, men Coventry møter Arsenal og Man City i GW1/GW3</td></tr>
+        <tr><td>Benk</td><td>MID</td><td>Regan Slater</td><td>Hull</td><td>£4.5m</td><td><span class="badge inj">1/6</span></td><td>Usikkert om han sikrer fast plass — ren budsjett-fyll til benken for å frigjøre mest mulig til startelleveren</td></tr>
       </tbody>
     </table>
     </div>
@@ -461,8 +470,10 @@
 <div class="tabpanel" id="tab-expert">
   <div class="data-note" style="margin-bottom:16px;">
     Dette er ikke fra FPL sitt eget API, men hentet fra eksterne FPL-sider (Premier League sin egen "The Scout"-
-    spalte og fixture-analyse) — se kilder nederst. Nyttig fordi FPL sin egen database foreløpig kun viser
-    Arsenal-spillere, mens disse sidene dekker alle 20 klubber. Oppdateres av den ukentlige jobben.
+    spalte, fixture-analyse, Fantasy Football Hub og AllAboutFPL) — se kilder nederst. Nyttig fordi FPL sin egen
+    database foreløpig kun viser Arsenal-spillere, mens disse sidene dekker alle 20 klubber. Oppdateres av den
+    ukentlige jobben — sjekket på nytt 26. juli 2026, bekreftet uendret mot fantasyfootballhub.co.uk og
+    allaboutfpl.com i tillegg til tidligere kilder.
   </div>
 
   <div class="card">
@@ -470,11 +481,11 @@
     <div class="tips-grid">
       <div class="tip-card">
         <h3>1. valg: Erling Haaland (Man City) £15.5m</h3>
-        <div class="sub">Man City har en av de beste kampplanene de første 6 rundene. Haaland er allerede eid av 71% av managere.</div>
+        <div class="sub">Man City har en av de beste kampplanene de første 6 rundene (Bournemouth, Crystal Palace, Coventry). Haaland er allerede eid av 71% av managere etter de første 24 timene — desidert mest populære kapteinsvalg.</div>
       </div>
       <div class="tip-card">
         <h3>Alternativ: Bruno Fernandes (Man Utd) £12.0m</h3>
-        <div class="sub">Man Utd møter to nyopprykkede lag (Hull, Ipswich) de to første rundene. Straffer, dødballer og garantert spilletid.</div>
+        <div class="sub">Man Utd møter to nyopprykkede lag (Hull, Ipswich) de to første rundene — best kampplan av alle lag i GW1-2. Straffer, dødballer og garantert spilletid. Matheus Cunha (£8.0m) er verdt å vurdere som en billigere måte å doble opp på angrepet.</div>
       </div>
     </div>
   </div>
@@ -486,29 +497,41 @@
         <li>Everton, Liverpool, Man Utd — snitt FDR 2,8</li>
         <li>Arsenal, Ipswich, Man City, Nott'm Forest — snitt FDR 3,0</li>
       </ol>
+      <div class="muted">Liverpool (Iraola) unngår alle fjorårets topp 10 i de fire første kampene. Newcastle har en tøff åpning (GW1-3) men topper tickeren GW4-10 og spiller ikke Europa i år.</div>
     </div>
     <div class="tip-card">
       <h3>📅 Verst kampplan, runde 1–6</h3>
       <ol>
-        <li>Bournemouth — snitt FDR 3,7 (møter Man City, Liverpool, Chelsea)</li>
+        <li>Bournemouth — snitt FDR 3,7 (møter Man City, Liverpool, Chelsea — alle FDR 4+)</li>
         <li>Coventry, Leeds — snitt FDR 3,5</li>
         <li>Hull — snitt FDR 3,3</li>
       </ol>
+      <div class="muted">Coventry (Frank Lampard) møter Arsenal i GW1 og Man City i GW3 — vanskeligst av de tre opprykkslagene.</div>
+    </div>
+    <div class="tip-card">
+      <h3>🔁 Rotasjonspar å vurdere</h3>
+      <div class="sub">The Scout trekker frem forsvarspar fra to klubber du kan alternere gjennom de første 5 rundene når den ene har vanskelig kamp: eksempler er backer som Kadioglu/Diakite og Shaw/Mykolenko. Nyttig hvis du vil ha billig, roterende clean-sheet-potensial uten å bruke en hel budsjettpost på én klubb.</div>
     </div>
     <div class="tip-card">
       <h3>👀 Verdt å følge med på</h3>
       <ul>
         <li><strong>Virgil van Dijk</strong> (Liverpool) — beste forsvarsspiller på allround-tall; Liverpool unngår alle fjorårets topp 10 i de fire første kampene</li>
-        <li><strong>Morgan Gibbs-White</strong> (Nott'm Forest) — 188 poeng i fjor, hjemmekamper mot Leeds/Spurs/Coventry tidlig</li>
-        <li><strong>Dominik Szoboszlai / Victor Munoz</strong> (Liverpool) — roller under ny manager Iraola verdt å følge i oppkjøringskampene</li>
+        <li><strong>Morgan Gibbs-White</strong> (Nott'm Forest) — 188 poeng i fjor (career-high), hjemmekamper mot Leeds/Spurs/Coventry tidlig</li>
+        <li><strong>Dominik Szoboszlai / Victor Munoz</strong> (Liverpool) — roller under ny manager Iraola verdt å følge i oppkjøringskampene; Szoboszlai er ikke med i VM 2026 så han er tilgjengelig hele pre-season</li>
+        <li><strong>William Saliba</strong> (Arsenal) — Arsenal bekrefter ryggskade med lengre fravær og ingen satt returdato (kirurgi droppet til fordel for konservativ behandling); gir en billigere Arsenal-forsvarer (Calafiori/Hincapié/Mosquera/White, alle £5.5m) fast plass ved siden av Gabriel i mellomtiden. Arsenal åpner hjemme mot Coventry 21. august</li>
       </ul>
     </div>
   </div>
 
   <div class="muted" style="margin-top:6px;">
     Kilder: <a href="https://www.premierleague.com/en/news/4681112/early-scout-selection-the-best-fantasy-squad-for-202627" target="_blank">Premier League – Early Scout Selection</a>,
-    <a href="https://www.premierleague.com/en/news/4675611/who-has-best-and-worst-early-fixtures-in-202627-fantasy" target="_blank">Premier League – Best/worst early fixtures</a>.
-    Hentet 24. juli 2026.
+    <a href="https://www.premierleague.com/en/news/4675611/who-has-best-and-worst-early-fixtures-in-202627-fantasy" target="_blank">Premier League – Best/worst early fixtures</a>,
+    <a href="https://www.premierleague.com/en/news/4678988/the-scouts-fpl-rotation-pairings-for-202627" target="_blank">Premier League – Scout's rotation pairings</a>,
+    <a href="https://www.fantasyfootballscout.co.uk/2026/07/20/fpl-2026-27-who-has-the-best-early-fixtures" target="_blank">Fantasy Football Scout – Who has the best early fixtures</a>,
+    <a href="https://www.fantasyfootballscout.co.uk/2026/07/23/fantasy-premier-league-fpl-2026-27-is-live" target="_blank">Fantasy Football Scout – FPL 2026/27 is live</a>,
+    <a href="https://www.fantasyfootballhub.co.uk/fantasy-premier-league-ultimate-guide-fpl-tips" target="_blank">Fantasy Football Hub – Ultimate Guide to Gameweek 1</a>,
+    <a href="https://allaboutfpl.com/2026/07/fpl-fixture-analysis-for-the-2026-27-fpl-season-pl-fixtures/" target="_blank">AllAboutFPL – Fixture analysis 2026/27</a>.
+    Hentet 26. juli 2026.
   </div>
 </div>
 
@@ -517,6 +540,9 @@
   prisendringer, skader, kommende kamper og hvor mange transfers du har brukt. Så snart en gameweek er spilt,
   bytter siden fra før-sesong-modus til full analyse: laget ditt hentes automatisk fra FPL, og forslagene over
   regnes ut på nytt basert på faktisk form kombinert med xG/xA. Du trenger ikke gjøre noe selv.
+  <br><br>
+  Denne siden publiseres også som en offentlig nettside på
+  <a href="https://oyvhans.github.io/fplpersonal/" target="_blank">oyvhans.github.io/fplpersonal</a> i tillegg til Cowork-artifacten.
   <br><br>
   Sist synkronisert med FPL: <span id="syncTime"></span>
 </div>
@@ -537,14 +563,14 @@ const POS = [
   {id:3, short:"MID", name:"Midtbane", slots:5},
   {id:4, short:"FWD", name:"Angrep", slots:3}
 ];
-// Hentet fra FPL bootstrap-static (kun Arsenal populert pr. i dag — se varsel i toppen)
+// Hentet fra FPL bootstrap-static (kun Arsenal populert pr. 26. juli 2026 — se varsel i toppen)
 const PLAYERS = [
   {id:1, name:"Raya", team:1, pos:1, price:6.0, pts:162, ppg:4.4, own:28.9, status:"a", news:"", starts:37, goals:0, assists:0, xg:0.00, xa:0.07, xgi:0.07, xgc:27.56},
   {id:2, name:"Arrizabalaga", team:1, pos:1, price:5.0, pts:2, ppg:2.0, own:0.4, status:"a", news:"", starts:1, goals:0, assists:0, xg:0.00, xa:0.00, xgi:0.00, xgc:0.98},
   {id:3, name:"Meslier", team:1, pos:1, price:5.0, pts:0, ppg:0.0, own:0.1, status:"a", news:"", starts:0, goals:0, assists:0, xg:0.00, xa:0.00, xgi:0.00, xgc:0.00},
   {id:4, name:"Gabriel", team:1, pos:2, price:8.0, pts:209, ppg:6.5, own:23.3, status:"a", news:"", starts:30, goals:3, assists:5, xg:2.94, xa:1.75, xgi:4.69, xgc:22.01},
-  {id:5, name:"J.Timber", team:1, pos:2, price:6.5, pts:149, ppg:5.0, own:1.1, status:"i", news:"Lyskeskade – forventet tilbake 21. aug", starts:28, goals:3, assists:6, xg:4.71, xa:1.53, xgi:6.24, xgc:17.45},
-  {id:6, name:"Saliba", team:1, pos:2, price:6.0, pts:137, ppg:4.4, own:0.6, status:"i", news:"Ryggskade – ukjent returdato", starts:30, goals:1, assists:0, xg:0.88, xa:1.21, xgi:2.09, xgc:20.41},
+  {id:5, name:"J.Timber", team:1, pos:2, price:6.5, pts:149, ppg:5.0, own:1.1, status:"i", news:"Lyskeskade – fortsatt i rehab, ingen bekreftet returdato", starts:28, goals:3, assists:6, xg:4.71, xa:1.53, xgi:6.24, xgc:17.45},
+  {id:6, name:"Saliba", team:1, pos:2, price:6.0, pts:137, ppg:4.4, own:0.6, status:"i", news:"Ryggskade – Arsenal bekrefter lengre fravær, ingen returdato satt", starts:30, goals:1, assists:0, xg:0.88, xa:1.21, xgi:2.09, xgc:20.41},
   {id:7, name:"Lewis-Skelly", team:1, pos:3, price:5.5, pts:29, ppg:1.4, own:0.3, status:"a", news:"", starts:5, goals:0, assists:0, xg:0.10, xa:0.20, xgi:0.30, xgc:9.01},
   {id:8, name:"Calafiori", team:1, pos:2, price:5.5, pts:109, ppg:4.2, own:11.6, status:"a", news:"", starts:22, goals:1, assists:2, xg:3.36, xa:0.76, xgi:4.12, xgc:9.72},
   {id:9, name:"Hincapié", team:1, pos:2, price:5.5, pts:87, ppg:3.5, own:6.4, status:"a", news:"", starts:20, goals:1, assists:2, xg:0.36, xa:1.67, xgi:2.03, xgc:17.53},
@@ -945,4 +971,3 @@ setInterval(renderCountdown, 3600000);
 </script>
 </body>
 </html>
-
