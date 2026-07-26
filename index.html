@@ -2,7 +2,7 @@
 {
   "name": "Fpl Transfer Forslag",
   "schemaVersion": 1,
-  "description": "FPL transfermodell for Øyvinds lag \"Sasasa-kameratene\" (lag-ID 1037413). Viser laget hans (redigerbart, lagres lokalt), en spillerdatabase hentet fra FPL sitt API, og før-sesong-tips. Oppdateres ukentlig med ferske transferforslag basert på faktiske gameweek-resultater etter sesongstart 21. august 2026."
+  "description": "FPL transfermodell for Øyvinds lag \"Sasasa-kameratene\" (lag-ID 1037413). Nordisk, lys og lesbar dashboard-layout med sidemeny (bunnmeny på mobil). Viser laget hans, en spillerdatabase hentet fra FPL sitt API, og før-sesong-tips. Oppdateres ukentlig med ferske transferforslag basert på faktiske gameweek-resultater etter sesongstart 21. august 2026."
 }
 </script>
 <html lang="no">
@@ -13,538 +13,527 @@
 <style>
   :root {
     color-scheme: light;
-    --purple: #37003c;
-    --purple-light: #6f2d7a;
-    --purple-pale: #f3ebf4;
-    --green: #00c46a;
-    --green-dark: #0a7a48;
-    --green-bg: #e6f9ef;
-    --red: #e0294a;
-    --red-bg: #fdeaee;
-    --amber: #b8860b;
-    --amber-bg: #fff6e0;
-    --blue: #2b6cd9;
-    --blue-bg: #eaf1fd;
-    --pink: #ff2882;
-    --border: #ece7ef;
+    /* Nordic neutrals */
+    --bg-page: #f5f4f0;
     --bg: #ffffff;
-    --bg-soft: #faf8fc;
-    --bg-page: #f6f3f8;
-    --text: #201b26;
-    --text-dim: #6f6879;
-    --shadow: 0 1px 2px rgba(55,0,60,0.05), 0 4px 14px rgba(55,0,60,0.06);
-    --shadow-sm: 0 1px 2px rgba(55,0,60,0.06);
-    --radius: 16px;
-    --radius-sm: 10px;
+    --bg-tint: #faf9f6;
+    --line: #e6e3db;
+    --line-soft: #eeece5;
+    --ink: #2a2a28;
+    --ink-soft: #6b6a63;
+    --ink-faint: #9d9c94;
+
+    /* Muted Nordic accents (one per section) */
+    --c-brand: #6d5a78;   /* muted heather plum – overall brand */
+    --c-squad: #7d6485;   /* plum */
+    --c-week:  #6f8f6a;   /* sage */
+    --c-players:#5b7f9e;  /* dusty blue */
+    --c-transfers:#c08a55;/* clay */
+    --c-tips:  #b57485;   /* muted rose */
+    --c-expert:#5e9089;   /* muted teal */
+
+    /* status */
+    --ok: #55895c; --ok-bg: #e9f1e7;
+    --neg: #ad5750; --neg-bg: #f7ebe8;
+    --warn: #a3822f; --warn-bg: #f6f0dd;
+    --info: #4d708f; --info-bg: #e9eff4;
+
+    --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+    --sh-1: 0 1px 2px rgba(42,42,40,.04), 0 1px 1px rgba(42,42,40,.03);
+    --sh-2: 0 10px 26px -14px rgba(42,42,40,.18);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
   body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    background: var(--bg-page);
-    color: var(--text);
-    padding: 16px 16px 48px;
-    max-width: 1180px;
-    margin: 0 auto;
-    font-size: 15px;
-    line-height: 1.45;
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; background: var(--bg-page); color: var(--ink);
+    font-size: 15.5px; line-height: 1.6;
   }
-  h1 { font-size: clamp(19px, 4.5vw, 23px); margin: 0 0 2px 0; color: var(--purple); font-weight: 800; letter-spacing: -0.01em; }
-  h2 { font-size: 15.5px; margin: 0 0 12px 0; color: var(--purple); font-weight: 700; display:flex; align-items:center; gap:8px; }
-  h3 { font-size: 13.5px; margin: 0 0 8px 0; color: var(--purple); font-weight: 700; }
-  .sub { color: var(--text-dim); font-size: 12.5px; margin-bottom: 14px; }
-  .muted { color: var(--text-dim); font-size: 12px; }
+  a { color: var(--c-brand); }
+  h1,h2,h3 { font-weight: 800; letter-spacing: -0.01em; color: var(--ink); margin: 0; }
+  h2 { font-size: 16.5px; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  h3 { font-size: 14px; margin-bottom: 6px; }
+  .sub { color: var(--ink-soft); font-size: 13px; }
+  .muted { color: var(--ink-faint); font-size: 12.5px; }
 
-  .app-header {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    margin-bottom: 14px; flex-wrap: wrap;
+  /* ---------- App shell: sidebar (desktop) / bottom bar (mobile) ---------- */
+  .app { display: flex; min-height: 100vh; }
+  .appnav {
+    display: flex; flex-direction: column; gap: 2px; width: 216px; flex: none;
+    background: var(--bg); border-right: 1px solid var(--line); padding: 18px 12px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
   }
-  .brand { display:flex; align-items:center; gap:10px; }
-  .brand-badge {
-    width: 38px; height: 38px; border-radius: 11px; flex: none;
-    background: linear-gradient(135deg, var(--purple), var(--pink));
-    color: #fff; display:flex; align-items:center; justify-content:center;
-    font-weight: 800; font-size: 15px; box-shadow: var(--shadow-sm);
+  .nav-brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 10px; flex: none; background: var(--c-brand);
+    color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;
   }
+  .brand-info .name { font-weight: 800; font-size: 13.5px; line-height: 1.25; }
+  .brand-info .team { font-size: 11px; color: var(--ink-faint); }
+  .navbtn {
+    --c: var(--c-brand);
+    appearance: none; border: none; background: none; cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: var(--r-sm);
+    font-size: 13.5px; font-weight: 700; color: var(--ink-soft); transition: background .15s, color .15s;
+  }
+  .navbtn .ic {
+    width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 13.5px; background: var(--bg-tint); flex: none;
+  }
+  .navbtn:hover { background: var(--bg-tint); color: var(--ink); }
+  .navbtn.active { background: color-mix(in srgb, var(--c) 12%, white); color: var(--c); }
+  .navbtn.active .ic { background: var(--c); color: #fff; }
+  .nav-foot { margin-top: auto; padding: 10px 8px 0; font-size: 10.5px; color: var(--ink-faint); border-top: 1px solid var(--line-soft); padding-top: 12px; }
 
-  .status-banner {
-    background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
-    color: white;
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 12px;
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-  }
-  .status-banner::after {
-    content: ""; position: absolute; right: -40px; top: -60px; width: 180px; height: 180px;
-    background: radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%); pointer-events: none;
-  }
-  .status-banner .left { max-width: 660px; }
-  .status-banner .title { font-weight: 800; font-size: 15px; margin-bottom: 4px; }
-  .status-banner .desc { font-size: 12.5px; opacity: 0.92; line-height: 1.55; }
-  .countdown { text-align: center; background: rgba(255,255,255,0.16); border-radius: var(--radius-sm); padding: 10px 18px; backdrop-filter: blur(2px); }
-  .countdown .num { font-size: 24px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
-  .countdown .lbl { font-size: 10.5px; opacity: 0.88; margin-top: 3px; }
+  .main { flex: 1; min-width: 0; }
+  .content { max-width: 980px; margin: 0 auto; padding: 22px 26px 70px; }
 
-  .data-note {
-    background: var(--amber-bg);
-    border: 1px solid #f0dca3;
-    color: #6b5000;
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-size: 12.5px;
-    line-height: 1.55;
+  .pageheader {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
     margin-bottom: 16px;
-    box-shadow: var(--shadow-sm);
   }
+  .pageheader .ttl { font-size: clamp(19px, 3vw, 23px); font-weight: 800; }
+  .pageheader .ttl-sub { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; }
+  .ring-chip { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 16px 6px 6px; box-shadow: var(--sh-1); }
+  .ring-wrap { width: 40px; height: 40px; position: relative; flex: none; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-wrap .num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--c-brand); }
+  .ring-txt .n { font-size: 13px; font-weight: 800; color: var(--ink); }
+  .ring-txt .l { font-size: 10.5px; color: var(--ink-faint); }
 
-  /* Tabs */
-  .tabbar-wrap { position: sticky; top: 0; z-index: 20; background: var(--bg-page); padding: 6px 0 10px; margin: 0 -16px 12px; }
-  .tabbar {
-    display: flex;
-    gap: 6px;
-    padding: 0 16px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .tabbar::-webkit-scrollbar { display: none; }
-  .tabbtn {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    font-size: 12.5px;
-    font-weight: 700;
-    padding: 9px 14px;
-    border-radius: 999px;
-    color: var(--text-dim);
-    cursor: pointer;
-    white-space: nowrap;
-    flex: none;
-    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
-  }
-  .tabbtn.active { color: #fff; background: var(--purple); border-color: var(--purple); box-shadow: var(--shadow-sm); }
-  .tabbtn:hover:not(.active) { color: var(--purple); border-color: var(--purple); }
-  .tabbtn:active { transform: scale(0.97); }
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+  @media (max-width: 680px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); padding: 13px 15px; box-shadow: var(--sh-1); }
+  .stat .lbl { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); }
+  .stat .val { font-size: 19px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Notes ---------- */
+  .note { display: flex; gap: 10px; align-items: flex-start; background: var(--warn-bg); border: 1px solid #e9dcae; color: #5f4a10; border-radius: var(--r-md); padding: 13px 15px; font-size: 12.5px; line-height: 1.6; margin-bottom: 16px; }
+  .note.info { background: var(--info-bg); border-color: #cddce8; color: #2e4a63; }
+  .note .ic { flex: none; font-size: 15px; margin-top: 1px; }
+
+  /* ---------- Tabs / panels ---------- */
   .tabpanel { display: none; }
-  .tabpanel.active { display: block; animation: fadeIn 0.18s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .tabpanel.active { display: block; animation: rise .18s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 18px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-sm);
-  }
-  .grid2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; align-items: start; }
-  @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--bg); border: 1px solid var(--line); border-top: 3px solid var(--accent, var(--c-brand)); border-radius: var(--r-lg); padding: 20px 22px; margin-bottom: 16px; box-shadow: var(--sh-1); }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  #tab-squad .card { --accent: var(--c-squad); }
+  #tab-weekteam .card { --accent: var(--c-week); }
+  #tab-players .card { --accent: var(--c-players); }
+  #tab-transfers .card { --accent: var(--c-transfers); }
+  #tab-tips .card { --accent: var(--c-tips); }
+  #tab-expert .card { --accent: var(--c-expert); }
 
-  .budget-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  @media (max-width: 560px) { .budget-row { grid-template-columns: 1fr 1fr; } }
-  .budget-box { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 12px; }
-  .budget-box .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-  .budget-box .value { font-size: 19px; font-weight: 800; margin-top: 3px; font-variant-numeric: tabular-nums; }
-  .budget-box.over .value { color: var(--red); }
-  .budget-box.ok .value { color: var(--green-dark); }
+  /* ---------- Budget bar ---------- */
+  .bar-track { height: 10px; border-radius: 999px; background: var(--line-soft); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--c-squad), #a58cae); transition: width .3s; }
 
-  .pos-group { margin-bottom: 16px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
-  .pos-title { font-weight: 800; font-size: 12.5px; color: var(--purple); margin-bottom: 10px; display:flex; align-items:center; gap:8px; }
-  .pos-badge { background: var(--purple); color: white; border-radius: 6px; padding: 3px 9px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em; }
-  .club-warning { color: var(--red); font-size: 11.5px; font-weight: 700; margin-top: 8px; background: var(--red-bg); padding: 8px 10px; border-radius: 8px; }
-
-  .slot-row { display: grid; grid-template-columns: 1fr 78px; gap: 8px; align-items: center; }
-  .slot-row.manual { grid-template-columns: 1.4fr 1fr 70px; }
+  /* ---------- Squad builder ---------- */
+  .pos-group { margin-bottom: 14px; }
+  .pos-group:last-child { margin-bottom: 0; }
+  .pos-title { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 12.5px; color: var(--c-squad); margin-bottom: 8px; }
+  .pos-badge { background: color-mix(in srgb, var(--c-squad) 14%, white); color: var(--c-squad); border-radius: 6px; padding: 3px 8px; font-size: 10.5px; font-weight: 800; }
+  .club-warning { color: var(--neg); font-size: 12px; font-weight: 700; margin-top: 8px; background: var(--neg-bg); padding: 9px 11px; border-radius: var(--r-sm); }
+  .slot-wrap { margin-bottom: 8px; }
+  .slot-row { display: grid; grid-template-columns: 1fr 76px; gap: 8px; align-items: center; }
+  .slot-row.manual { grid-template-columns: 1.3fr 1fr 68px; }
   select, input[type=text], input[type=number] {
-    width: 100%; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--border);
-    font-size: 13.5px; background: var(--bg); color: var(--text); min-height: 40px;
+    width: 100%; padding: 11px 12px; border-radius: var(--r-sm); border: 1.5px solid var(--line);
+    font-size: 14px; background: var(--bg-tint); color: var(--ink); min-height: 44px; font-family: inherit;
   }
-  select:focus, input:focus { outline: 2px solid var(--purple-light); outline-offset: 1px; }
-  .price-tag { text-align: right; font-weight: 800; font-size: 13px; color: var(--purple); padding-right: 4px; font-variant-numeric: tabular-nums; }
-  .manual-toggle { font-size: 11px; color: var(--purple); cursor: pointer; text-decoration: underline; display:inline-block; padding: 6px 0; }
-  .slot-wrap { margin-bottom: 10px; }
-  .slot-wrap:last-child { margin-bottom: 0; }
-  .slot-flag { font-size: 11px; margin-top: 4px; }
-  .slot-flag.warn { color: var(--red); font-weight: 700; background: var(--red-bg); padding: 5px 8px; border-radius: 7px; }
+  select:focus, input:focus { outline: none; border-color: var(--c-squad); background: var(--bg); }
+  .price-tag { text-align: right; font-weight: 800; font-size: 13.5px; color: var(--c-squad); font-variant-numeric: tabular-nums; }
+  .manual-toggle { font-size: 11.5px; color: var(--c-squad); cursor: pointer; font-weight: 700; display: inline-block; padding: 7px 2px 0; }
+  .slot-flag { font-size: 11.5px; margin-top: 5px; }
+  .slot-flag.warn { color: var(--neg); font-weight: 700; background: var(--neg-bg); padding: 6px 9px; border-radius: 8px; }
+  .save-msg { font-size: 12px; color: var(--ok); height: 18px; margin-top: 8px; font-weight: 700; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  th { color: var(--text-dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.03em; cursor: pointer; user-select:none; font-weight: 700; background: var(--bg-soft); }
-  th:hover { color: var(--purple); }
-  tr:hover td { background: var(--purple-pale); }
-  .table-scroll { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); -webkit-overflow-scrolling: touch; }
-  .table-scroll table { border: none; }
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 800; }
-  .badge.ok { background: var(--green-bg); color: var(--green-dark); }
-  .badge.inj { background: var(--red-bg); color: var(--red); }
-  .badge.pos { background: var(--blue-bg); color: var(--blue); }
-  .badge.neg { background: var(--red-bg); color: var(--red); }
-  .news-txt { font-size: 10.5px; color: var(--red); display:block; margin-top:2px; white-space: normal; }
-  .filter-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
-  .filter-btn { border:1px solid var(--border); background:var(--bg); border-radius:999px; padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer; color: var(--text-dim); }
-  .filter-btn.active { background:var(--purple); color:white; border-color:var(--purple); }
-  .search-input { max-width: 220px; flex: 1; min-width: 160px; }
+  /* ---------- Avatars ---------- */
+  .av { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #fff; flex: none; }
+  .nm-cell { display: flex; align-items: center; gap: 9px; }
 
-  .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
-  .tip-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px 15px; border-left: 4px solid var(--purple); }
-  .tip-card ol, .tip-card ul { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.8; }
+  /* ---------- Pitch (Ukens lag) ---------- */
+  .pitch {
+    background: linear-gradient(180deg, #7d9a7a, #63805f 60%, #4f6b4b);
+    border-radius: var(--r-lg); padding: 20px 12px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden;
+  }
+  .pitch::before { content: ""; position: absolute; inset: 10px; border: 1.5px dashed rgba(255,255,255,.3); border-radius: 12px; pointer-events: none; }
+  .pitch-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: relative; }
+  .pchip { background: rgba(255,255,255,.97); border-radius: 12px; padding: 8px 10px; min-width: 92px; max-width: 128px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,.15); position: relative; }
+  .pchip .nm { font-weight: 800; font-size: 12px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pchip .cl { font-size: 10px; color: var(--ink-faint); font-weight: 700; margin-top: 1px; }
+  .pchip .pr { font-size: 10.5px; color: var(--c-week); font-weight: 800; margin-top: 3px; }
+  .pchip .cap { position: absolute; top: -7px; right: -7px; background: var(--c-transfers); color: #fff; font-size: 9.5px; font-weight: 800; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .pchip .rt { position: absolute; top: -7px; left: -7px; }
+  .bench-strip { background: var(--bg-tint); border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+  .bench-strip .lbl { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: var(--ink-faint); flex: none; }
+  .bench-chip { background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 9px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .bench-chip .pr { color: var(--ink-faint); font-weight: 600; }
 
-  .swap-card { background: var(--bg-soft); border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: var(--radius-sm); padding: 13px 15px; margin-bottom: 10px; }
-  .swap-head { display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:800; margin-bottom:6px; flex-wrap: wrap; }
-  .swap-reason { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.5; }
-  .swap-out { color: var(--red); }
-  .swap-arrow { color: var(--text-dim); font-weight: 500; font-size: 11.5px; }
-  .swap-candidates { display:flex; gap:8px; flex-wrap:wrap; }
-  .candidate-chip { background: var(--green-bg); color: var(--green-dark); border-radius: 999px; padding: 7px 12px; font-size: 12px; font-weight: 700; }
+  /* ---------- Tables ---------- */
+  .table-scroll { border-radius: var(--r-md); border: 1px solid var(--line); overflow: hidden; }
+  .table-scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 11px 13px; border-bottom: 1px solid var(--line-soft); }
+  thead th { color: var(--ink-faint); font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; cursor: pointer; user-select: none; font-weight: 800; background: var(--bg-tint); white-space: nowrap; }
+  thead th:hover { color: var(--ink); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--bg-tint); }
 
-  .transfer-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom: 16px; }
-  @media (max-width: 560px) { .transfer-row { grid-template-columns: 1fr; } }
-  .transfer-box { background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; }
-  .transfer-box .label { font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700; letter-spacing:0.04em; }
-  .transfer-box .ctrl { display:flex; align-items:center; gap:10px; margin-top:6px; }
-  .stepper-btn { width:34px; height:34px; border-radius:9px; border:1px solid var(--border); background:var(--bg); cursor:pointer; font-size:16px; font-weight:700; color: var(--purple); }
-  .stepper-btn:active { background: var(--purple-pale); }
-  .transfer-box .bignum { font-size:20px; font-weight:800; min-width: 28px; text-align:center; font-variant-numeric: tabular-nums; }
-  .log-add { display:flex; gap:8px; margin-bottom: 12px; flex-wrap:wrap; }
-  .log-add input { max-width: 130px; flex: 1; min-width: 90px; }
-  .btn-primary { background: var(--purple); color:white; border:none; border-radius:9px; padding:9px 16px; font-size:12.5px; cursor:pointer; font-weight:700; min-height: 40px; }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-del { background:none; border:none; color:var(--red); cursor:pointer; font-size:12px; font-weight:600; padding: 4px 8px; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; }
+  .badge.ok { background: var(--ok-bg); color: var(--ok); }
+  .badge.inj { background: var(--neg-bg); color: var(--neg); }
+  .badge.pos { background: var(--info-bg); color: var(--info); }
+  .badge.neg { background: var(--neg-bg); color: var(--neg); }
+  .news-txt { font-size: 10.5px; color: var(--neg); display: block; margin-top: 3px; white-space: normal; }
 
-  .footer-note { font-size: 11.5px; color: var(--text-dim); line-height: 1.6; border-top: 1px solid var(--border); margin-top: 22px; padding-top: 14px; }
-  .save-msg { font-size: 11.5px; color: var(--green-dark); height: 16px; margin-top: 6px; font-weight: 600; }
+  @media (max-width: 720px) {
+    .table-scroll-x { overflow-x: visible; }
+    .table-scroll table, .table-scroll thead, .table-scroll tbody, .table-scroll tr, .table-scroll th, .table-scroll td { display: block; }
+    .table-scroll { border: none; }
+    .table-scroll thead { display: none; }
+    .table-scroll tbody tr { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--sh-1); }
+    .table-scroll tbody tr:hover td { background: transparent; }
+    .table-scroll td { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: none; padding: 6px 0; white-space: normal; text-align: right; }
+    .table-scroll td.mh { display: none; }
+    .table-scroll td::before { content: attr(data-label); font-weight: 800; color: var(--ink-faint); font-size: 10.5px; text-transform: uppercase; text-align: left; flex: none; padding-right: 10px; }
+    .table-scroll td[data-label="Begrunnelse"] { display: block; text-align: left; }
+    .table-scroll td[data-label="Begrunnelse"]::before { display: block; margin-bottom: 4px; }
+  }
 
-  @media (max-width: 480px) {
-    body { padding: 12px 12px 40px; font-size: 14px; }
-    .card { padding: 14px 14px; border-radius: 14px; }
-    .status-banner { padding: 14px; }
-    table { font-size: 11.5px; }
-    th, td { padding: 8px 8px; }
+  /* ---------- Filters ---------- */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+  .filter-btn { border: 1.5px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 15px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink-soft); }
+  .filter-btn.active { background: var(--c-players); color: #fff; border-color: var(--c-players); }
+  .filter-btn:hover:not(.active) { border-color: var(--c-players); color: var(--c-players); }
+  .search-input { max-width: 240px; flex: 1; min-width: 170px; }
+
+  /* ---------- Tips / swap ---------- */
+  .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .tip-card { background: var(--bg-tint); border: 1px solid var(--line); border-radius: var(--r-md); padding: 15px 17px; border-left: 4px solid var(--accent, var(--c-brand)); }
+  .tip-card ol, .tip-card ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.8; }
+  .swap-card { background: var(--bg-tint); border: 1px solid var(--line); border-left: 4px solid var(--neg); border-radius: var(--r-md); padding: 15px 17px; margin-bottom: 10px; }
+  .swap-head { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; margin-bottom: 6px; flex-wrap: wrap; }
+  .swap-reason { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 11px; line-height: 1.55; }
+  .swap-out { color: var(--neg); }
+  .swap-arrow { color: var(--ink-faint); font-weight: 600; font-size: 11.5px; }
+  .swap-candidates { display: flex; gap: 8px; flex-wrap: wrap; }
+  .candidate-chip { background: var(--ok-bg); color: var(--ok); border-radius: 999px; padding: 7px 13px; font-size: 12px; font-weight: 700; }
+
+  /* ---------- Transfers ---------- */
+  .transfer-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+  @media (max-width: 620px) { .transfer-row { grid-template-columns: 1fr; } }
+  .transfer-box { background: var(--bg-tint); border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px 16px; }
+  .transfer-box .label { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; font-weight: 800; }
+  .transfer-box .ctrl { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .stepper-btn { width: 36px; height: 36px; border-radius: var(--r-sm); border: 1.5px solid var(--line); background: var(--bg); cursor: pointer; font-size: 17px; font-weight: 700; color: var(--c-transfers); }
+  .stepper-btn:active { background: var(--bg-tint); }
+  .transfer-box .bignum { font-size: 21px; font-weight: 800; min-width: 30px; text-align: center; font-variant-numeric: tabular-nums; }
+  .log-add { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .log-add input { max-width: 130px; flex: 1; min-width: 96px; }
+  .btn-primary { background: var(--c-transfers); color: #fff; border: none; border-radius: var(--r-sm); padding: 11px 18px; font-size: 13px; cursor: pointer; font-weight: 700; min-height: 44px; }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-del { background: none; border: none; color: var(--neg); cursor: pointer; font-size: 12.5px; font-weight: 700; padding: 4px 8px; }
+
+  /* ---------- Expert ---------- */
+  .src-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .src-chip { background: var(--bg-tint); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; font-size: 11.5px; font-weight: 600; text-decoration: none; color: var(--ink-soft); }
+  .src-chip:hover { border-color: var(--c-expert); color: var(--c-expert); }
+
+  .footer-note { font-size: 12px; color: var(--ink-faint); line-height: 1.7; border-top: 1px solid var(--line); margin-top: 26px; padding-top: 16px; }
+
+  /* ---------- Mobile: bottom nav ---------- */
+  @media (max-width: 900px) {
+    .app { flex-direction: column; }
+    .appnav {
+      position: fixed; bottom: 0; left: 0; right: 0; top: auto; width: 100%; height: auto;
+      flex-direction: row; justify-content: space-between; border-right: none; border-top: 1px solid var(--line);
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); z-index: 40; overflow-x: auto;
+      box-shadow: 0 -8px 24px -14px rgba(42,42,40,.25);
+    }
+    .nav-brand, .nav-foot { display: none; }
+    .navbtn { flex-direction: column; gap: 3px; padding: 6px 8px; border-radius: 10px; font-size: 9.5px; flex: 1; align-items: center; }
+    .navbtn .ic { width: 24px; height: 24px; font-size: 12px; }
+    .navbtn span.lbl { white-space: nowrap; }
+    .main { padding-bottom: 74px; }
+    .content { padding: 16px 14px 24px; }
   }
 </style>
 </head>
 <body>
+<div class="app">
+  <nav class="appnav" role="tablist">
+    <div class="nav-brand">
+      <div class="brand-mark">FPL</div>
+      <div class="brand-info">
+        <div class="name">Sasasa-kameratene</div>
+        <div class="team">#1037413</div>
+      </div>
+    </div>
+    <button class="navbtn active" data-tab="squad" data-title="Laget mitt" style="--c:var(--c-squad)"><span class="ic">⚽</span><span class="lbl">Laget mitt</span></button>
+    <button class="navbtn" data-tab="weekteam" data-title="Ukens lag" style="--c:var(--c-week)"><span class="ic">🗓️</span><span class="lbl">Ukens lag</span></button>
+    <button class="navbtn" data-tab="players" data-title="Spillerdatabase &amp; xG" style="--c:var(--c-players)"><span class="ic">📊</span><span class="lbl">Spillere</span></button>
+    <button class="navbtn" data-tab="transfers" data-title="Transfers" style="--c:var(--c-transfers)"><span class="ic">🔄</span><span class="lbl">Transfers</span></button>
+    <button class="navbtn" data-tab="tips" data-title="Tips &amp; byttesignaler" style="--c:var(--c-tips)"><span class="ic">💡</span><span class="lbl">Tips</span></button>
+    <button class="navbtn" data-tab="expert" data-title="Eksperttips" style="--c:var(--c-expert)"><span class="ic">🧠</span><span class="lbl">Ekspert</span></button>
+    <div class="nav-foot">Sist synket:<br><span id="syncTime"></span></div>
+  </nav>
 
-<div class="app-header">
-  <div class="brand">
-    <div class="brand-badge">FPL</div>
-    <div>
-      <h1>Transfermodell</h1>
-      <div class="sub" style="margin-bottom:0;">Sasasa-kameratene · Øyvind Hansen · Favoritt: Spurs</div>
-    </div>
-  </div>
-</div>
+  <div class="main">
+    <div class="content">
 
-<div class="status-banner">
-  <div class="left">
-    <div class="title" id="statusTitle">Sesongen 2026/27 er ikke i gang ennå</div>
-    <div class="desc">
-      Ingen gameweeks er spilt, og FPL har ikke registrert noen picks for laget ditt ennå (det skjer først når
-      du lagrer et lag på fantasy.premierleague.com, eller når GW1 sparkes i gang). Bygg laget ditt under —
-      siden bytter automatisk til full ukentlig transferanalyse basert på ekte kamper så snart data finnes.
-    </div>
-  </div>
-  <div class="countdown">
-    <div class="num" id="cdDays">–</div>
-    <div class="lbl">dager til GW1-frist<br><span id="cdDate"></span></div>
-  </div>
-</div>
-
-<div class="data-note">
-  <strong>Om spillerdatabasen:</strong> Sjekket FPL sitt API på nytt 26. juli 2026 — uendret siden forrige sjekk.
-  Det eksponerer foreløpig kun 19 spillere totalt (hele Arsenal-troppen, ingen spisser) av de 20 klubbene som
-  finnes — resten av Premier League-troppene er ikke lagt inn i FPL sitt system ennå så tidlig i overgangsvinduet.
-  Det er en begrensning i selve datakilden, ikke noe jeg kan hente rundt akkurat nå. Entry-en din (1037413) har
-  fortsatt ingen picks registrert. Den ukentlige jobben sjekker automatisk om flere spillere/klubber dukker opp
-  og fyller inn databasen fortløpende. Frem til da: bruk "skriv inn manuelt" for spillere fra andre klubber.
-</div>
-
-<div class="tabbar-wrap">
-  <div class="tabbar">
-    <button class="tabbtn active" data-tab="squad">⚽ Laget mitt</button>
-    <button class="tabbtn" data-tab="weekteam">🗓️ Ukens lag</button>
-    <button class="tabbtn" data-tab="players">📊 Spillerdatabase &amp; xG</button>
-    <button class="tabbtn" data-tab="transfers">🔄 Transfers</button>
-    <button class="tabbtn" data-tab="tips">💡 Tips &amp; byttesignaler</button>
-    <button class="tabbtn" data-tab="expert">🧠 Eksperttips</button>
-  </div>
-</div>
-
-<!-- TAB: SQUAD -->
-<div class="tabpanel active" id="tab-squad">
-  <div class="card">
-    <div class="budget-row">
-      <div class="budget-box"><div class="label">Budsjett</div><div class="value">£100.0m</div></div>
-      <div class="budget-box"><div class="label">Brukt</div><div class="value" id="spentVal">£0.0m</div></div>
-      <div class="budget-box ok"><div class="label">Bank</div><div class="value" id="bankVal">£100.0m</div></div>
-      <div class="budget-box"><div class="label">Spillere valgt</div><div class="value" id="filledVal">0 / 15</div></div>
-    </div>
-    <div id="squadContainer"></div>
-    <div class="save-msg" id="saveMsg"></div>
-  </div>
-</div>
-
-<!-- TAB: WEEK TEAM -->
-<div class="tabpanel" id="tab-weekteam">
-  <div class="data-note" style="margin-bottom:16px;">
-    Denne fanen viser mitt forslag til beste lag for <strong>kommende gameweek</strong>, satt sammen fra eksterne
-    FPL-ekspertkilder (se kilder nederst i "Eksperttips"). Oppdateres automatisk hver tirsdag av den ukentlige
-    jobben, sammen med resten av dashbordet. Sist gjennomgått 26. juli 2026 — bekreftet uendret mot
-    fantasyfootballhub.co.uk og allaboutfpl.com i tillegg til tidligere kilder, så forslaget under står fast frem
-    til nye Scout-anbefalinger eller oppkjøringskamp-resultater dukker opp.
-  </div>
-  <div class="card">
-    <h2>⭐ Ukens lag — forslag til 21. august (3-4-3)</h2>
-    <div class="sub">
-      Full 15-manns tropp satt sammen fra "The Scout" sine anbefalinger, akkurat innenfor £100.0m. Hver spiller har
-      fått en vurdering fra 0–6 for hvor lurt jeg mener det er å ha akkurat den spilleren i laget ditt akkurat nå
-      (6 = svært sterkt valg, 0 = unngå). Vurderingen er min egen tolkning basert på kampplan, prisutvikling,
-      rolle-sikkerhet og eierskap — ikke et tall FPL selv oppgir.
-    </div>
-    <div class="table-scroll">
-    <table>
-      <thead><tr><th>Rolle</th><th>Pos</th><th>Spiller</th><th>Klubb</th><th>Pris</th><th>Vurdering</th><th>Begrunnelse</th></tr></thead>
-      <tbody>
-        <tr><td>Start</td><td>GKP</td><td>Antonin Kinski</td><td>Spurs</td><td>£4.5m</td><td><span class="badge ok">5/6</span></td><td>Beste budsjett-keeper; Spurs slapp færrest store sjanser etter GW32 i fjor. Vicario ryktes bort, Dubravka (£4.0m) som billig back-up gir £8.5m totalt på keeperplassene</td></tr>
-        <tr><td>Start</td><td>DEF</td><td>Gabriel</td><td>Arsenal</td><td>£8.0m</td><td><span class="badge ok">6/6</span></td><td>209 poeng, 18 clean sheets i fjor — minst 30 mer enn noen annen forsvarsspiller; Arsenal møter kun ett topp-6-lag i første 8 runder. Vurder å doble opp med Raya i mål</td></tr>
-        <tr><td>Start</td><td>DEF</td><td>Harry Maguire</td><td>Man Utd</td><td>£5.0m</td><td><span class="badge ok">4/6</span></td><td>Billig, beste DC-forsvarer på Man Utd i fjor, dødball-trussel, møter Hull/Ipswich tidlig — men rotasjonsrisiko over tid</td></tr>
-        <tr><td>Start</td><td>DEF</td><td>Arsenal-forsvarer (Calafiori/Hincapié/Mosquera/White)</td><td>Arsenal</td><td>£5.5m</td><td><span class="badge neg">3/6</span></td><td>Saliba ute i en lengre periode (ryggskade, ingen bekreftet returdato) og en av disse tar trolig plassen — Calafiori er plassholder i Scout-laget, men usikkert hvem før oppkjøringskampene er ferdig</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Bruno Fernandes</td><td>Man Utd</td><td>£12.0m</td><td><span class="badge ok">5/6</span></td><td>Straffer/dødballer, møter Hull + Ipswich først — dyrest i troppen (pris opp £3m fra i fjor sammen med Haaland/Gabriel-trioen), så resten av budsjettet må strekkes</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Matheus Cunha</td><td>Man Utd</td><td>£8.0m</td><td><span class="badge pos">4/6</span></td><td>Dobler opp på Man Utds gode åpning; mer enn dobbelt så mange scoringspoeng som Mbeumo over lagets siste 7 kamper i fjor, samme pris</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Anton Stach</td><td>Leeds</td><td>£6.0m</td><td><span class="badge pos">4/6</span></td><td>5 mål + 6 assists + 20 DC-poeng tross skadeavbrekk i fjor; Leeds unngår alle fjorårets topp 7 i de første 5 kampene</td></tr>
-        <tr><td>Start</td><td>MID</td><td>Granit Xhaka</td><td>Sunderland</td><td>£5.5m</td><td><span class="badge pos">4/6</span></td><td>1 mål, 6 assists, 26 DC-poeng; snill åpning (Ipswich borte, Fulham hjemme) i GW1-2</td></tr>
-        <tr><td>Start · <strong>Kaptein</strong></td><td>FWD</td><td>Erling Haaland</td><td>Man City</td><td>£15.5m</td><td><span class="badge ok">6/6</span></td><td>Beste tidlige kampplan i troppen (Bournemouth/Crystal Palace/Coventry), 71% eierskap etter de første 24 timene — klart tryggeste kapteinsvalg</td></tr>
-        <tr><td>Start</td><td>FWD</td><td>Joao Pedro</td><td>Chelsea</td><td>£7.5m</td><td><span class="badge ok">5/6</span></td><td>Mest populære spiss ved siden av Haaland (45% eierskap); snill åpning mot Fulham/Brighton/Hull under Xabi Alonso</td></tr>
-        <tr><td>Start</td><td>FWD</td><td>William Osula</td><td>Newcastle</td><td>£6.0m</td><td><span class="badge neg">3/6</span></td><td>Startet siste 7 kamper i fjor og scoret 5 — Newcastle møter kun 3 av fjorårets topp 10 i første 10 runder, men spissplassen er ennå ikke garantert</td></tr>
-        <tr><td>Benk</td><td>GKP</td><td>Martin Dubravka</td><td>Spurs</td><td>£4.0m</td><td><span class="badge inj">1/6</span></td><td>Ren backup — kun aktuell hvis Kinski/Vicario-situasjonen endrer seg</td></tr>
-        <tr><td>Benk</td><td>DEF</td><td>Charlie Hughes</td><td>Hull</td><td>£4.0m</td><td><span class="badge neg">2/6</span></td><td>11,8 CBIT/90 i Championship i fjor — flest blant nyopprykkede forsvarsspillere — men Hull har tøff åpning (Man Utd, Villa, Chelsea, Newcastle)</td></tr>
-        <tr><td>Benk</td><td>DEF</td><td>Bobby Thomas</td><td>Coventry</td><td>£4.0m</td><td><span class="badge neg">2/6</span></td><td>3 mål/4 assists + 8,6 CBIT/90 i Championship, men Coventry møter Arsenal og Man City i GW1/GW3</td></tr>
-        <tr><td>Benk</td><td>MID</td><td>Regan Slater</td><td>Hull</td><td>£4.5m</td><td><span class="badge inj">1/6</span></td><td>Usikkert om han sikrer fast plass — ren budsjett-fyll til benken for å frigjøre mest mulig til startelleveren</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <div class="muted" style="margin-top:8px;">
-      Totalpris: nøyaktig £100.0m. Dette er "The Scout" sine anbefalinger satt sammen til en full, gyldig tropp av
-      meg (maks 3 per klubb er overholdt) — ikke en offisiell FPL-mal. Kopier gjerne inn spillerne under "Laget
-      mitt" for å teste budsjettet ditt.
-    </div>
-  </div>
-</div>
-
-<!-- TAB: PLAYERS -->
-<div class="tabpanel" id="tab-players">
-  <div class="card">
-    <div class="filter-row">
-      <button class="filter-btn active" data-pos="all">Alle</button>
-      <button class="filter-btn" data-pos="1">GKP</button>
-      <button class="filter-btn" data-pos="2">DEF</button>
-      <button class="filter-btn" data-pos="3">MID</button>
-      <button class="filter-btn" data-pos="4">FWD</button>
-      <input type="text" class="search-input" id="playerSearch" placeholder="Søk etter navn…">
-    </div>
-    <div class="table-scroll">
-    <table id="playerTable">
-      <thead>
-        <tr>
-          <th data-key="name">Navn</th>
-          <th data-key="posShort">Pos</th>
-          <th data-key="price">Pris</th>
-          <th data-key="pts">Poeng ’25/26</th>
-          <th data-key="ppg">P/kamp</th>
-          <th data-key="own">Eierskap</th>
-          <th data-key="xg">xG</th>
-          <th data-key="xa">xA</th>
-          <th data-key="xgi">xGI</th>
-          <th data-key="xgiPer90">xGI/start</th>
-          <th data-key="xgc">xGC</th>
-          <th data-key="overperf">G+A vs xGI</th>
-          <th data-key="status">Status</th>
-        </tr>
-      </thead>
-      <tbody id="playerTableBody"></tbody>
-    </table>
-    </div>
-    <div class="muted" style="margin-top:10px;">
-      xG/xA/xGI = forventede mål/målgivende/målinvolveringer basert på sjansekvalitet. xGC = forventede baklengsmål
-      (lavere er bedre for keeper/forsvar). "G+A vs xGI" viser om en spiller har prestert over (+ = kan være
-      flaks, vurder salg før nedgang) eller under (− = uflaks, kan være et kupp) sin underliggende sjansekvalitet.
-    </div>
-  </div>
-</div>
-
-<!-- TAB: TRANSFERS -->
-<div class="tabpanel" id="tab-transfers">
-  <div class="card">
-    <h2>Denne rundens transfers</h2>
-    <div class="sub">
-      FPL viser antall tilgjengelige transfers og eventuelle poengtrekk automatisk så snart du har spilt minst én
-      gameweek. Frem til da kan du styre tellerne manuelt her — de oppdateres automatisk av den ukentlige jobben
-      når ekte data finnes.
-    </div>
-    <div class="transfer-row">
-      <div class="transfer-box">
-        <div class="label">Frie transfers</div>
-        <div class="ctrl">
-          <button class="stepper-btn" id="ftMinus">−</button>
-          <div class="bignum" id="ftVal">1</div>
-          <button class="stepper-btn" id="ftPlus">+</button>
+      <div class="pageheader">
+        <div>
+          <div class="ttl" id="pageTitle">Laget mitt</div>
+          <div class="ttl-sub" id="pageSub">Øyvind Hansen · Favoritt: Spurs</div>
+        </div>
+        <div class="ring-chip">
+          <div class="ring-wrap">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="16" fill="none" stroke="var(--line)" stroke-width="4"/>
+              <circle id="cdRing" cx="20" cy="20" r="16" fill="none" stroke="var(--c-week)" stroke-width="4" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="0"/>
+            </svg>
+            <div class="num" id="cdDaysRing">–</div>
+          </div>
+          <div class="ring-txt"><div class="n" id="cdDays">– dager</div><div class="l">til GW1-frist, 21. aug</div></div>
         </div>
       </div>
-      <div class="transfer-box">
-        <div class="label">Brukt denne runden</div>
-        <div class="ctrl">
-          <button class="stepper-btn" id="tuMinus">−</button>
-          <div class="bignum" id="tuVal">0</div>
-          <button class="stepper-btn" id="tuPlus">+</button>
+
+      <div class="stat-row">
+        <div class="stat"><div class="lbl">Budsjett</div><div class="val">£100.0m</div></div>
+        <div class="stat"><div class="lbl">Spillere i DB</div><div class="val" id="dbCountVal">19</div></div>
+        <div class="stat"><div class="lbl">Klubber dekket</div><div class="val" id="dbClubVal">1 / 20</div></div>
+        <div class="stat"><div class="lbl">Status</div><div class="val" style="font-size:13px;" id="statusTitle">Ikke startet</div></div>
+      </div>
+
+      <div class="note">
+        <span class="ic">⚠️</span>
+        <div>
+          <strong>Om spillerdatabasen:</strong> Sjekket FPL sitt API på nytt 26. juli 2026 — uendret siden forrige sjekk.
+          Det eksponerer foreløpig kun 19 spillere totalt (hele Arsenal-troppen, ingen spisser) av de 20 klubbene som
+          finnes — resten av Premier League-troppene er ikke lagt inn i FPL sitt system ennå så tidlig i overgangsvinduet.
+          Entry-en din (1037413) har fortsatt ingen picks registrert. Den ukentlige jobben sjekker automatisk om flere
+          spillere/klubber dukker opp. Frem til da: bruk "skriv inn manuelt" for spillere fra andre klubber.
         </div>
       </div>
-      <div class="transfer-box">
-        <div class="label">Poengtrekk (hits)</div>
-        <div class="ctrl"><div class="bignum" id="hitVal" style="color:var(--red);">0</div><span class="muted">poeng</span></div>
+
+      <!-- TAB: SQUAD -->
+      <div class="tabpanel active" id="tab-squad">
+        <div class="card">
+          <div class="card-head"><h2>Bygg laget ditt</h2></div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; margin-bottom:6px;">
+              <span>Brukt: <span id="spentVal">£0.0m</span></span>
+              <span>Bank: <span id="bankVal">£100.0m</span></span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" id="budgetBar" style="width:0%"></div></div>
+            <div class="muted" style="margin-top:6px;">Spillere valgt: <span id="filledVal">0 / 15</span></div>
+          </div>
+          <div id="squadContainer"></div>
+          <div class="save-msg" id="saveMsg"></div>
+        </div>
+      </div>
+
+      <!-- TAB: WEEK TEAM -->
+      <div class="tabpanel" id="tab-weekteam">
+        <div class="note info">
+          <span class="ic">🗓️</span>
+          <div>
+            Forslag til <strong>kommende gameweek</strong>, satt sammen fra eksterne FPL-ekspertkilder (se kilder
+            nederst i "Eksperttips"). Oppdateres automatisk hver tirsdag. Sist gjennomgått 26. juli 2026 — bekreftet
+            uendret mot fantasyfootballhub.co.uk og allaboutfpl.com i tillegg til tidligere kilder.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h2>⭐ Ukens lag — forslag til 21. august</h2><div class="sub">Formasjon 3-4-3 · nøyaktig £100.0m · maks 3 per klubb</div></div></div>
+          <div class="pitch">
+            <div class="pitch-row"><div class="pchip"><div class="rt"><span class="badge ok">5</span></div><div class="nm">Kinski</div><div class="cl">GKP · Spurs</div><div class="pr">£4.5m</div></div></div>
+            <div class="pitch-row">
+              <div class="pchip"><div class="rt"><span class="badge ok">6</span></div><div class="nm">Gabriel</div><div class="cl">DEF · Arsenal</div><div class="pr">£8.0m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge ok">4</span></div><div class="nm">Maguire</div><div class="cl">DEF · Man Utd</div><div class="pr">£5.0m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge neg">3</span></div><div class="nm">Ars-forsvarer*</div><div class="cl">DEF · Arsenal</div><div class="pr">£5.5m</div></div>
+            </div>
+            <div class="pitch-row">
+              <div class="pchip"><div class="rt"><span class="badge ok">5</span></div><div class="nm">Bruno F.</div><div class="cl">MID · Man Utd</div><div class="pr">£12.0m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge pos">4</span></div><div class="nm">Cunha</div><div class="cl">MID · Man Utd</div><div class="pr">£8.0m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge pos">4</span></div><div class="nm">Stach</div><div class="cl">MID · Leeds</div><div class="pr">£6.0m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge pos">4</span></div><div class="nm">Xhaka</div><div class="cl">MID · Sunderland</div><div class="pr">£5.5m</div></div>
+            </div>
+            <div class="pitch-row">
+              <div class="pchip"><div class="cap">C</div><div class="rt"><span class="badge ok">6</span></div><div class="nm">Haaland</div><div class="cl">FWD · Man City</div><div class="pr">£15.5m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge ok">5</span></div><div class="nm">João Pedro</div><div class="cl">FWD · Chelsea</div><div class="pr">£7.5m</div></div>
+              <div class="pchip"><div class="rt"><span class="badge neg">3</span></div><div class="nm">Osula</div><div class="cl">FWD · Newcastle</div><div class="pr">£6.0m</div></div>
+            </div>
+            <div class="bench-strip">
+              <span class="lbl">Benk</span>
+              <span class="bench-chip">Dubravka <span class="pr">£4.0m</span></span>
+              <span class="bench-chip">Hughes <span class="pr">£4.0m</span></span>
+              <span class="bench-chip">Thomas <span class="pr">£4.0m</span></span>
+              <span class="bench-chip">Slater <span class="pr">£4.5m</span></span>
+            </div>
+          </div>
+          <div class="muted" style="margin-top:10px;">*Calafiori/Hincapié/Mosquera/White — usikkert hvem som starter. Vurderingsskala 0–6 er min egen tolkning, ikke et FPL-tall.</div>
+        </div>
+
+        <div class="card">
+          <h2>Full tropp med begrunnelse</h2>
+          <div class="table-scroll"><div class="table-scroll-x">
+          <table>
+            <thead><tr><th>Rolle</th><th>Pos</th><th>Spiller</th><th>Klubb</th><th>Pris</th><th>Vurdering</th><th>Begrunnelse</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">GKP</td><td data-label="Spiller">Antonin Kinski</td><td data-label="Klubb">Spurs</td><td data-label="Pris">£4.5m</td><td data-label="Vurdering"><span class="badge ok">5/6</span></td><td data-label="Begrunnelse">Beste budsjett-keeper; Spurs slapp færrest store sjanser etter GW32 i fjor. Vicario ryktes bort, Dubravka (£4.0m) som billig back-up gir £8.5m totalt på keeperplassene</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">DEF</td><td data-label="Spiller">Gabriel</td><td data-label="Klubb">Arsenal</td><td data-label="Pris">£8.0m</td><td data-label="Vurdering"><span class="badge ok">6/6</span></td><td data-label="Begrunnelse">209 poeng, 18 clean sheets i fjor — minst 30 mer enn noen annen forsvarsspiller; Arsenal møter kun ett topp-6-lag i første 8 runder. Vurder å doble opp med Raya i mål</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">DEF</td><td data-label="Spiller">Harry Maguire</td><td data-label="Klubb">Man Utd</td><td data-label="Pris">£5.0m</td><td data-label="Vurdering"><span class="badge ok">4/6</span></td><td data-label="Begrunnelse">Billig, beste DC-forsvarer på Man Utd i fjor, dødball-trussel, møter Hull/Ipswich tidlig — men rotasjonsrisiko over tid</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">DEF</td><td data-label="Spiller">Arsenal-forsvarer (Calafiori/Hincapié/Mosquera/White)</td><td data-label="Klubb">Arsenal</td><td data-label="Pris">£5.5m</td><td data-label="Vurdering"><span class="badge neg">3/6</span></td><td data-label="Begrunnelse">Saliba ute i en lengre periode (ryggskade, ingen bekreftet returdato) og en av disse tar trolig plassen — Calafiori er plassholder i Scout-laget, men usikkert hvem før oppkjøringskampene er ferdig</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">MID</td><td data-label="Spiller">Bruno Fernandes</td><td data-label="Klubb">Man Utd</td><td data-label="Pris">£12.0m</td><td data-label="Vurdering"><span class="badge ok">5/6</span></td><td data-label="Begrunnelse">Straffer/dødballer, møter Hull + Ipswich først — dyrest i troppen, så resten av budsjettet må strekkes</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">MID</td><td data-label="Spiller">Matheus Cunha</td><td data-label="Klubb">Man Utd</td><td data-label="Pris">£8.0m</td><td data-label="Vurdering"><span class="badge pos">4/6</span></td><td data-label="Begrunnelse">Dobler opp på Man Utds gode åpning; mer enn dobbelt så mange scoringspoeng som Mbeumo over lagets siste 7 kamper i fjor, samme pris</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">MID</td><td data-label="Spiller">Anton Stach</td><td data-label="Klubb">Leeds</td><td data-label="Pris">£6.0m</td><td data-label="Vurdering"><span class="badge pos">4/6</span></td><td data-label="Begrunnelse">5 mål + 6 assists + 20 DC-poeng tross skadeavbrekk i fjor; Leeds unngår alle fjorårets topp 7 i de første 5 kampene</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">MID</td><td data-label="Spiller">Granit Xhaka</td><td data-label="Klubb">Sunderland</td><td data-label="Pris">£5.5m</td><td data-label="Vurdering"><span class="badge pos">4/6</span></td><td data-label="Begrunnelse">1 mål, 6 assists, 26 DC-poeng; snill åpning (Ipswich borte, Fulham hjemme) i GW1-2</td></tr>
+              <tr><td data-label="Rolle">Start · Kaptein</td><td data-label="Pos">FWD</td><td data-label="Spiller">Erling Haaland</td><td data-label="Klubb">Man City</td><td data-label="Pris">£15.5m</td><td data-label="Vurdering"><span class="badge ok">6/6</span></td><td data-label="Begrunnelse">Beste tidlige kampplan i troppen, 71% eierskap etter de første 24 timene — klart tryggeste kapteinsvalg</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">FWD</td><td data-label="Spiller">Joao Pedro</td><td data-label="Klubb">Chelsea</td><td data-label="Pris">£7.5m</td><td data-label="Vurdering"><span class="badge ok">5/6</span></td><td data-label="Begrunnelse">Mest populære spiss ved siden av Haaland (45% eierskap); snill åpning mot Fulham/Brighton/Hull under Xabi Alonso</td></tr>
+              <tr><td data-label="Rolle">Start</td><td data-label="Pos">FWD</td><td data-label="Spiller">William Osula</td><td data-label="Klubb">Newcastle</td><td data-label="Pris">£6.0m</td><td data-label="Vurdering"><span class="badge neg">3/6</span></td><td data-label="Begrunnelse">Startet siste 7 kamper i fjor og scoret 5 — spissplassen er ennå ikke garantert</td></tr>
+              <tr><td data-label="Rolle">Benk</td><td data-label="Pos">GKP</td><td data-label="Spiller">Martin Dubravka</td><td data-label="Klubb">Spurs</td><td data-label="Pris">£4.0m</td><td data-label="Vurdering"><span class="badge inj">1/6</span></td><td data-label="Begrunnelse">Ren backup — kun aktuell hvis Kinski/Vicario-situasjonen endrer seg</td></tr>
+              <tr><td data-label="Rolle">Benk</td><td data-label="Pos">DEF</td><td data-label="Spiller">Charlie Hughes</td><td data-label="Klubb">Hull</td><td data-label="Pris">£4.0m</td><td data-label="Vurdering"><span class="badge neg">2/6</span></td><td data-label="Begrunnelse">Flest CBIT/90 blant nyopprykkede forsvarsspillere, men Hull har tøff åpning</td></tr>
+              <tr><td data-label="Rolle">Benk</td><td data-label="Pos">DEF</td><td data-label="Spiller">Bobby Thomas</td><td data-label="Klubb">Coventry</td><td data-label="Pris">£4.0m</td><td data-label="Vurdering"><span class="badge neg">2/6</span></td><td data-label="Begrunnelse">Solide Championship-tall, men Coventry møter Arsenal og Man City i GW1/GW3</td></tr>
+              <tr><td data-label="Rolle">Benk</td><td data-label="Pos">MID</td><td data-label="Spiller">Regan Slater</td><td data-label="Klubb">Hull</td><td data-label="Pris">£4.5m</td><td data-label="Vurdering"><span class="badge inj">1/6</span></td><td data-label="Begrunnelse">Usikkert om han sikrer fast plass — ren budsjett-fyll til benken</td></tr>
+            </tbody>
+          </table>
+          </div></div>
+          <div class="muted" style="margin-top:10px;">Dette er "The Scout" sine anbefalinger satt sammen til en full, gyldig tropp av meg — ikke en offisiell FPL-mal.</div>
+        </div>
+      </div>
+
+      <!-- TAB: PLAYERS -->
+      <div class="tabpanel" id="tab-players">
+        <div class="card">
+          <div class="card-head"><h2>📊 Spillerdatabase &amp; xG</h2></div>
+          <div class="filter-row">
+            <button class="filter-btn active" data-pos="all">Alle</button>
+            <button class="filter-btn" data-pos="1">GKP</button>
+            <button class="filter-btn" data-pos="2">DEF</button>
+            <button class="filter-btn" data-pos="3">MID</button>
+            <button class="filter-btn" data-pos="4">FWD</button>
+            <input type="text" class="search-input" id="playerSearch" placeholder="Søk etter navn…">
+          </div>
+          <div class="table-scroll"><div class="table-scroll-x">
+          <table id="playerTable">
+            <thead>
+              <tr>
+                <th data-key="name">Navn</th>
+                <th data-key="posShort">Pos</th>
+                <th data-key="price">Pris</th>
+                <th data-key="pts">Poeng ’25/26</th>
+                <th data-key="ppg">P/kamp</th>
+                <th data-key="own">Eierskap</th>
+                <th data-key="xg" class="mh">xG</th>
+                <th data-key="xa" class="mh">xA</th>
+                <th data-key="xgi" class="mh">xGI</th>
+                <th data-key="xgiPer90" class="mh">xGI/start</th>
+                <th data-key="xgc" class="mh">xGC</th>
+                <th data-key="overperf">G+A vs xGI</th>
+                <th data-key="status">Status</th>
+              </tr>
+            </thead>
+            <tbody id="playerTableBody"></tbody>
+          </table>
+          </div></div>
+          <div class="muted" style="margin-top:12px;">
+            xG/xA/xGI = forventede mål/målgivende/målinvolveringer. xGC = forventede baklengsmål (lavere er bedre).
+            "G+A vs xGI" viser over-/underprestasjon mot underliggende sjansekvalitet. Detaljerte xG-kolonner skjules på mobil.
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: TRANSFERS -->
+      <div class="tabpanel" id="tab-transfers">
+        <div class="card">
+          <h2>Denne rundens transfers</h2>
+          <div class="sub" style="margin-bottom:14px;">FPL viser dette automatisk etter minst én spilt gameweek. Frem til da: styr tellerne manuelt.</div>
+          <div class="transfer-row">
+            <div class="transfer-box"><div class="label">Frie transfers</div><div class="ctrl"><button class="stepper-btn" id="ftMinus">−</button><div class="bignum" id="ftVal">1</div><button class="stepper-btn" id="ftPlus">+</button></div></div>
+            <div class="transfer-box"><div class="label">Brukt denne runden</div><div class="ctrl"><button class="stepper-btn" id="tuMinus">−</button><div class="bignum" id="tuVal">0</div><button class="stepper-btn" id="tuPlus">+</button></div></div>
+            <div class="transfer-box"><div class="label">Poengtrekk (hits)</div><div class="ctrl"><div class="bignum" id="hitVal" style="color:var(--neg);">0</div><span class="muted">poeng</span></div></div>
+          </div>
+          <h3>Transferhistorikk</h3>
+          <div class="log-add">
+            <input type="number" id="logGw" placeholder="GW #" min="1" max="38">
+            <input type="number" id="logCount" placeholder="Transfers" min="0">
+            <input type="text" id="logNote" placeholder="Notat (valgfritt)" style="max-width:240px;">
+            <button class="btn-primary" id="logAddBtn">Legg til</button>
+          </div>
+          <div class="table-scroll"><div class="table-scroll-x">
+          <table><thead><tr><th>GW</th><th>Transfers</th><th>Poengtrekk</th><th>Notat</th><th></th></tr></thead><tbody id="transferLogBody"></tbody></table>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- TAB: TIPS -->
+      <div class="tabpanel" id="tab-tips">
+        <div class="card">
+          <h2>Byttesignaler basert på laget ditt</h2>
+          <div class="sub" style="margin-bottom:12px;">Sammenligner spillerne i laget ditt mot resten av databasen på xG/xA-baserte nøkkeltall.</div>
+          <div id="swapSuggestions"></div>
+        </div>
+        <h2 style="margin:20px 0 12px;">Generelle xG/xA-innsikter</h2>
+        <div class="tips-grid">
+          <div class="tip-card"><h3>🔥 Undervurderte differensialer</h3><ol id="tipDiff"></ol><div class="muted" style="margin-top:6px;">Høy xGI per kamp startet, lav eierskapsprosent.</div></div>
+          <div class="tip-card"><h3>📉 Kan gå mot nedgang (selg-signal)</h3><ol id="tipOverperf"></ol><div class="muted" style="margin-top:6px;">Faktiske poeng ligger godt over det underliggende xG/xA tilsier.</div></div>
+          <div class="tip-card"><h3>📈 Snart uttelling (kjøp-signal)</h3><ol id="tipUnderperf"></ol><div class="muted" style="margin-top:6px;">Skaper sjanser uten å få det betalt ennå.</div></div>
+          <div class="tip-card"><h3>🛡️ Best defensivt</h3><ol id="tipDefense"></ol><div class="muted" style="margin-top:6px;">Lavest xGC per kamp startet.</div></div>
+          <div class="tip-card"><h3>⚠️ Skadewatch</h3><ul id="tipInjury"></ul></div>
+        </div>
+      </div>
+
+      <!-- TAB: EXPERT -->
+      <div class="tabpanel" id="tab-expert">
+        <div class="note info">
+          <span class="ic">🧠</span>
+          <div>Hentet fra eksterne FPL-sider (Premier League "The Scout", Fantasy Football Hub, AllAboutFPL) — se kilder nederst. Sjekket på nytt 26. juli 2026, bekreftet uendret mot nye kilder i tillegg til tidligere.</div>
+        </div>
+        <div class="card">
+          <h2>🧢 Kapteinsanbefaling frem til GW1</h2>
+          <div class="tips-grid">
+            <div class="tip-card"><h3>1. valg: Erling Haaland (Man City) £15.5m</h3><div class="sub">Man City har en av de beste kampplanene de første 6 rundene. Haaland er allerede eid av 71% av managere — desidert mest populære kapteinsvalg.</div></div>
+            <div class="tip-card"><h3>Alternativ: Bruno Fernandes (Man Utd) £12.0m</h3><div class="sub">Man Utd møter to nyopprykkede lag først. Straffer, dødballer og garantert spilletid. Cunha (£8.0m) som billigere dobling.</div></div>
+          </div>
+        </div>
+        <div class="tips-grid">
+          <div class="tip-card"><h3>📅 Best kampplan, runde 1–6</h3><ol><li>Everton, Liverpool, Man Utd — snitt FDR 2,8</li><li>Arsenal, Ipswich, Man City, Nott'm Forest — snitt FDR 3,0</li></ol><div class="muted" style="margin-top:6px;">Liverpool (Iraola) unngår alle fjorårets topp 10 i de fire første kampene.</div></div>
+          <div class="tip-card"><h3>📅 Verst kampplan, runde 1–6</h3><ol><li>Bournemouth — snitt FDR 3,7</li><li>Coventry, Leeds — snitt FDR 3,5</li><li>Hull — snitt FDR 3,3</li></ol><div class="muted" style="margin-top:6px;">Coventry møter Arsenal i GW1 og Man City i GW3.</div></div>
+          <div class="tip-card"><h3>🔁 Rotasjonspar</h3><div class="sub">Backpar som Kadioglu/Diakite og Shaw/Mykolenko for billig, roterende clean-sheet-potensial.</div></div>
+          <div class="tip-card"><h3>👀 Verdt å følge med på</h3><ul>
+            <li><strong>Virgil van Dijk</strong> (Liverpool) — beste allround-forsvarer</li>
+            <li><strong>Morgan Gibbs-White</strong> (Nott'm Forest) — 188 poeng i fjor</li>
+            <li><strong>Szoboszlai/Munoz</strong> (Liverpool) — roller under Iraola</li>
+            <li><strong>William Saliba</strong> (Arsenal) — bekreftet lengre skadefravær, ingen returdato; åpner mulighet for billigere Arsenal-forsvarer</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:10px;">Kilder</h3>
+          <div class="src-list">
+            <a class="src-chip" href="https://www.premierleague.com/en/news/4681112/early-scout-selection-the-best-fantasy-squad-for-202627" target="_blank">PL – Early Scout Selection</a>
+            <a class="src-chip" href="https://www.premierleague.com/en/news/4675611/who-has-best-and-worst-early-fixtures-in-202627-fantasy" target="_blank">PL – Best/worst fixtures</a>
+            <a class="src-chip" href="https://www.premierleague.com/en/news/4678988/the-scouts-fpl-rotation-pairings-for-202627" target="_blank">PL – Rotation pairings</a>
+            <a class="src-chip" href="https://www.fantasyfootballscout.co.uk/2026/07/20/fpl-2026-27-who-has-the-best-early-fixtures" target="_blank">FF Scout – Best fixtures</a>
+            <a class="src-chip" href="https://www.fantasyfootballscout.co.uk/2026/07/23/fantasy-premier-league-fpl-2026-27-is-live" target="_blank">FF Scout – FPL is live</a>
+            <a class="src-chip" href="https://www.fantasyfootballhub.co.uk/fantasy-premier-league-ultimate-guide-fpl-tips" target="_blank">FF Hub – Ultimate guide</a>
+            <a class="src-chip" href="https://allaboutfpl.com/2026/07/fpl-fixture-analysis-for-the-2026-27-fpl-season-pl-fixtures/" target="_blank">AllAboutFPL – Fixtures</a>
+          </div>
+          <div class="muted" style="margin-top:10px;">Hentet 26. juli 2026.</div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <strong>Slik fungerer automatikken:</strong> Hver tirsdag henter jeg friske data fra FPL sitt API. Så snart en
+        gameweek er spilt, bytter siden fra før-sesong-modus til full analyse basert på faktisk form kombinert med xG/xA.
+        <br><br>
+        Publiseres også på <a href="https://oyvhans.github.io/fplpersonal/" target="_blank">oyvhans.github.io/fplpersonal</a>.
       </div>
     </div>
-
-    <h3>Transferhistorikk</h3>
-    <div class="log-add">
-      <input type="number" id="logGw" placeholder="GW #" min="1" max="38">
-      <input type="number" id="logCount" placeholder="Transfers" min="0">
-      <input type="text" id="logNote" placeholder="Notat (valgfritt)" style="max-width:240px;">
-      <button class="btn-primary" id="logAddBtn">Legg til</button>
-    </div>
-    <div class="table-scroll">
-    <table>
-      <thead><tr><th>GW</th><th>Transfers</th><th>Poengtrekk</th><th>Notat</th><th></th></tr></thead>
-      <tbody id="transferLogBody"></tbody>
-    </table>
-    </div>
   </div>
-</div>
-
-<!-- TAB: TIPS -->
-<div class="tabpanel" id="tab-tips">
-  <div class="card">
-    <h2>Byttesignaler basert på laget ditt</h2>
-    <div class="sub">Sammenligner spillerne i laget ditt mot resten av databasen på xG/xA-baserte nøkkeltall.</div>
-    <div id="swapSuggestions"></div>
-  </div>
-
-  <h2 style="margin-top:20px;">Generelle xG/xA-innsikter</h2>
-  <div class="tips-grid">
-    <div class="tip-card">
-      <h3>🔥 Undervurderte differensialer</h3>
-      <ol id="tipDiff"></ol>
-      <div class="muted">Høy xGI per kamp startet, lav eierskapsprosent.</div>
-    </div>
-    <div class="tip-card">
-      <h3>📉 Kan gå mot nedgang (selg-signal)</h3>
-      <ol id="tipOverperf"></ol>
-      <div class="muted">Faktiske poeng ligger godt over det underliggende xG/xA tilsier.</div>
-    </div>
-    <div class="tip-card">
-      <h3>📈 Snart uttelling (kjøp-signal)</h3>
-      <ol id="tipUnderperf"></ol>
-      <div class="muted">Skaper sjanser (høy xG/xA) uten å få det betalt ennå.</div>
-    </div>
-    <div class="tip-card">
-      <h3>🛡️ Best defensivt (lavest xGC/start)</h3>
-      <ol id="tipDefense"></ol>
-      <div class="muted">Forsvarsspillere/keepere som slipper til færrest forventede mål.</div>
-    </div>
-    <div class="tip-card">
-      <h3>⚠️ Skadewatch</h3>
-      <ul id="tipInjury"></ul>
-    </div>
-  </div>
-</div>
-
-<!-- TAB: EXPERT -->
-<div class="tabpanel" id="tab-expert">
-  <div class="data-note" style="margin-bottom:16px;">
-    Dette er ikke fra FPL sitt eget API, men hentet fra eksterne FPL-sider (Premier League sin egen "The Scout"-
-    spalte, fixture-analyse, Fantasy Football Hub og AllAboutFPL) — se kilder nederst. Nyttig fordi FPL sin egen
-    database foreløpig kun viser Arsenal-spillere, mens disse sidene dekker alle 20 klubber. Oppdateres av den
-    ukentlige jobben — sjekket på nytt 26. juli 2026, bekreftet uendret mot fantasyfootballhub.co.uk og
-    allaboutfpl.com i tillegg til tidligere kilder.
-  </div>
-
-  <div class="card">
-    <h2>🧢 Kapteinsanbefaling frem til GW1</h2>
-    <div class="tips-grid">
-      <div class="tip-card">
-        <h3>1. valg: Erling Haaland (Man City) £15.5m</h3>
-        <div class="sub">Man City har en av de beste kampplanene de første 6 rundene (Bournemouth, Crystal Palace, Coventry). Haaland er allerede eid av 71% av managere etter de første 24 timene — desidert mest populære kapteinsvalg.</div>
-      </div>
-      <div class="tip-card">
-        <h3>Alternativ: Bruno Fernandes (Man Utd) £12.0m</h3>
-        <div class="sub">Man Utd møter to nyopprykkede lag (Hull, Ipswich) de to første rundene — best kampplan av alle lag i GW1-2. Straffer, dødballer og garantert spilletid. Matheus Cunha (£8.0m) er verdt å vurdere som en billigere måte å doble opp på angrepet.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="tips-grid">
-    <div class="tip-card">
-      <h3>📅 Best kampplan, runde 1–6</h3>
-      <ol>
-        <li>Everton, Liverpool, Man Utd — snitt FDR 2,8</li>
-        <li>Arsenal, Ipswich, Man City, Nott'm Forest — snitt FDR 3,0</li>
-      </ol>
-      <div class="muted">Liverpool (Iraola) unngår alle fjorårets topp 10 i de fire første kampene. Newcastle har en tøff åpning (GW1-3) men topper tickeren GW4-10 og spiller ikke Europa i år.</div>
-    </div>
-    <div class="tip-card">
-      <h3>📅 Verst kampplan, runde 1–6</h3>
-      <ol>
-        <li>Bournemouth — snitt FDR 3,7 (møter Man City, Liverpool, Chelsea — alle FDR 4+)</li>
-        <li>Coventry, Leeds — snitt FDR 3,5</li>
-        <li>Hull — snitt FDR 3,3</li>
-      </ol>
-      <div class="muted">Coventry (Frank Lampard) møter Arsenal i GW1 og Man City i GW3 — vanskeligst av de tre opprykkslagene.</div>
-    </div>
-    <div class="tip-card">
-      <h3>🔁 Rotasjonspar å vurdere</h3>
-      <div class="sub">The Scout trekker frem forsvarspar fra to klubber du kan alternere gjennom de første 5 rundene når den ene har vanskelig kamp: eksempler er backer som Kadioglu/Diakite og Shaw/Mykolenko. Nyttig hvis du vil ha billig, roterende clean-sheet-potensial uten å bruke en hel budsjettpost på én klubb.</div>
-    </div>
-    <div class="tip-card">
-      <h3>👀 Verdt å følge med på</h3>
-      <ul>
-        <li><strong>Virgil van Dijk</strong> (Liverpool) — beste forsvarsspiller på allround-tall; Liverpool unngår alle fjorårets topp 10 i de fire første kampene</li>
-        <li><strong>Morgan Gibbs-White</strong> (Nott'm Forest) — 188 poeng i fjor (career-high), hjemmekamper mot Leeds/Spurs/Coventry tidlig</li>
-        <li><strong>Dominik Szoboszlai / Victor Munoz</strong> (Liverpool) — roller under ny manager Iraola verdt å følge i oppkjøringskampene; Szoboszlai er ikke med i VM 2026 så han er tilgjengelig hele pre-season</li>
-        <li><strong>William Saliba</strong> (Arsenal) — Arsenal bekrefter ryggskade med lengre fravær og ingen satt returdato (kirurgi droppet til fordel for konservativ behandling); gir en billigere Arsenal-forsvarer (Calafiori/Hincapié/Mosquera/White, alle £5.5m) fast plass ved siden av Gabriel i mellomtiden. Arsenal åpner hjemme mot Coventry 21. august</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="muted" style="margin-top:6px;">
-    Kilder: <a href="https://www.premierleague.com/en/news/4681112/early-scout-selection-the-best-fantasy-squad-for-202627" target="_blank">Premier League – Early Scout Selection</a>,
-    <a href="https://www.premierleague.com/en/news/4675611/who-has-best-and-worst-early-fixtures-in-202627-fantasy" target="_blank">Premier League – Best/worst early fixtures</a>,
-    <a href="https://www.premierleague.com/en/news/4678988/the-scouts-fpl-rotation-pairings-for-202627" target="_blank">Premier League – Scout's rotation pairings</a>,
-    <a href="https://www.fantasyfootballscout.co.uk/2026/07/20/fpl-2026-27-who-has-the-best-early-fixtures" target="_blank">Fantasy Football Scout – Who has the best early fixtures</a>,
-    <a href="https://www.fantasyfootballscout.co.uk/2026/07/23/fantasy-premier-league-fpl-2026-27-is-live" target="_blank">Fantasy Football Scout – FPL 2026/27 is live</a>,
-    <a href="https://www.fantasyfootballhub.co.uk/fantasy-premier-league-ultimate-guide-fpl-tips" target="_blank">Fantasy Football Hub – Ultimate Guide to Gameweek 1</a>,
-    <a href="https://allaboutfpl.com/2026/07/fpl-fixture-analysis-for-the-2026-27-fpl-season-pl-fixtures/" target="_blank">AllAboutFPL – Fixture analysis 2026/27</a>.
-    Hentet 26. juli 2026.
-  </div>
-</div>
-
-<div class="footer-note">
-  <strong>Slik fungerer automatikken:</strong> Hver tirsdag henter jeg friske data fra FPL sitt API — poeng, xG/xA,
-  prisendringer, skader, kommende kamper og hvor mange transfers du har brukt. Så snart en gameweek er spilt,
-  bytter siden fra før-sesong-modus til full analyse: laget ditt hentes automatisk fra FPL, og forslagene over
-  regnes ut på nytt basert på faktisk form kombinert med xG/xA. Du trenger ikke gjøre noe selv.
-  <br><br>
-  Denne siden publiseres også som en offentlig nettside på
-  <a href="https://oyvhans.github.io/fplpersonal/" target="_blank">oyvhans.github.io/fplpersonal</a> i tillegg til Cowork-artifacten.
-  <br><br>
-  Sist synkronisert med FPL: <span id="syncTime"></span>
 </div>
 
 <script>
@@ -558,10 +547,10 @@ const TEAMS = [
   {id:19,name:"Spurs",short:"TOT"},{id:20,name:"Sunderland",short:"SUN"}
 ];
 const POS = [
-  {id:1, short:"GKP", name:"Keeper", slots:2},
-  {id:2, short:"DEF", name:"Forsvar", slots:5},
-  {id:3, short:"MID", name:"Midtbane", slots:5},
-  {id:4, short:"FWD", name:"Angrep", slots:3}
+  {id:1, short:"GKP", name:"Keeper", slots:2, color:"#a3822f"},
+  {id:2, short:"DEF", name:"Forsvar", slots:5, color:"#5b7f9e"},
+  {id:3, short:"MID", name:"Midtbane", slots:5, color:"#55895c"},
+  {id:4, short:"FWD", name:"Angrep", slots:3, color:"#ad5750"}
 ];
 // Hentet fra FPL bootstrap-static (kun Arsenal populert pr. 26. juli 2026 — se varsel i toppen)
 const PLAYERS = [
@@ -586,6 +575,7 @@ const PLAYERS = [
   {id:19, name:"Zubimendi", team:1, pos:3, price:5.5, pts:133, ppg:3.5, own:1.2, status:"a", news:"", starts:34, goals:5, assists:1, xg:2.84, xa:2.27, xgi:5.11, xgc:26.09}
 ];
 const GW1_DEADLINE = new Date("2026-08-21T17:30:00Z");
+const SEASON_WINDOW_DAYS = 51; // ca. fra 1. juli til GW1-frist, kun til visuell ring
 const TEAM_ID = "1037413";
 const SQUAD_KEY = "fpl_squad_" + TEAM_ID;
 const TRANSFER_KEY = "fpl_transfers_" + TEAM_ID;
@@ -596,44 +586,45 @@ function posOf(id){ return POS.find(p=>p.id===id); }
 function xgiPerStart(p){ return p.starts > 0 ? p.xgi / p.starts : 0; }
 function xgcPerStart(p){ return p.starts > 0 ? p.xgc / p.starts : 0; }
 function overperf(p){ return (p.goals + p.assists) - p.xgi; }
+function initials(name){ return name.replace(/[^A-Za-zÀ-ÿ.\- ]/g,"").split(/[ .\-]/).filter(Boolean).slice(0,2).map(s=>s[0]).join("").toUpperCase() || "?"; }
+function avatarHtml(p){ const c = posOf(p.pos).color; return `<span class="av" style="background:${c}">${initials(p.name)}</span>`; }
 
-// ---- Tabs ----
-document.querySelectorAll(".tabbtn").forEach(btn=>{
+document.getElementById("dbCountVal").textContent = PLAYERS.length;
+document.getElementById("dbClubVal").textContent = new Set(PLAYERS.map(p=>p.team)).size + " / 20";
+
+// ---- Nav ----
+document.querySelectorAll(".navbtn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    document.querySelectorAll(".tabbtn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
     document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("active"));
     btn.classList.add("active");
     document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    document.getElementById("pageTitle").textContent = btn.dataset.title;
   });
 });
 
-// ---- Countdown ----
+// ---- Countdown ring ----
+const RING_C = 2 * Math.PI * 16;
+document.getElementById("cdRing").setAttribute("stroke-dasharray", RING_C.toFixed(1));
 function renderCountdown(){
   const now = new Date();
   const diffMs = GW1_DEADLINE - now;
   const days = Math.max(0, Math.ceil(diffMs / 86400000));
-  document.getElementById("cdDays").textContent = days;
-  document.getElementById("cdDate").textContent = "fre 21. aug 2026, 19:30";
+  document.getElementById("cdDays").textContent = days + " dager";
+  document.getElementById("cdDaysRing").textContent = days;
+  const frac = Math.max(0, Math.min(1, days / SEASON_WINDOW_DAYS));
+  const offset = RING_C * frac;
+  document.getElementById("cdRing").setAttribute("stroke-dashoffset", offset.toFixed(1));
 }
 
 // ---- Squad state ----
 function buildSlotList(){
   const slots = [];
-  POS.forEach(p=>{
-    for(let i=0;i<p.slots;i++){
-      slots.push({pos:p.id, playerId:null, manual:false, manualName:"", manualClub:"", manualPrice:0});
-    }
-  });
+  POS.forEach(p=>{ for(let i=0;i<p.slots;i++){ slots.push({pos:p.id, playerId:null, manual:false, manualName:"", manualClub:"", manualPrice:0}); } });
   return slots;
 }
 function loadSquad(){
-  try{
-    const raw = localStorage.getItem(SQUAD_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(Array.isArray(parsed) && parsed.length === 15) return parsed;
-    }
-  }catch(e){}
+  try{ const raw = localStorage.getItem(SQUAD_KEY); if(raw){ const parsed = JSON.parse(raw); if(Array.isArray(parsed) && parsed.length === 15) return parsed; } }catch(e){}
   return buildSlotList();
 }
 function saveSquad(){
@@ -655,29 +646,24 @@ function slotClubId(slot){
   if(slot.playerId){ const p = PLAYERS.find(pl=>pl.id===slot.playerId); return p ? p.team : null; }
   return null;
 }
-function squadPlayers(){
-  return squad.filter(s=>!s.manual && s.playerId).map(s=>PLAYERS.find(p=>p.id===s.playerId)).filter(Boolean);
-}
+function squadPlayers(){ return squad.filter(s=>!s.manual && s.playerId).map(s=>PLAYERS.find(p=>p.id===s.playerId)).filter(Boolean); }
 
 function renderSquad(){
   const container = document.getElementById("squadContainer");
   container.innerHTML = "";
   let slotIndex = 0;
-
   const clubCounts = {};
   squad.forEach(s=>{ const c = slotClubId(s); if(c){ clubCounts[c] = (clubCounts[c]||0)+1; } });
 
   POS.forEach(posDef=>{
     const groupSlots = [];
     for(let i=0;i<posDef.slots;i++){ groupSlots.push(slotIndex); slotIndex++; }
-
     const groupDiv = document.createElement("div");
     groupDiv.className = "pos-group";
     const titleDiv = document.createElement("div");
     titleDiv.className = "pos-title";
     titleDiv.innerHTML = `<span class="pos-badge">${posDef.short}</span> ${posDef.name} (${posDef.slots})`;
     groupDiv.appendChild(titleDiv);
-
     const availablePlayers = PLAYERS.filter(p=>p.pos===posDef.id).sort((a,b)=>b.pts-a.pts);
 
     groupSlots.forEach(idx=>{
@@ -690,24 +676,18 @@ function renderSquad(){
       if(!slot.manual){
         const select = document.createElement("select");
         const optNone = document.createElement("option");
-        optNone.value = "";
-        optNone.textContent = availablePlayers.length ? "Velg spiller…" : "Ingen i databasen ennå";
+        optNone.value = ""; optNone.textContent = availablePlayers.length ? "Velg spiller…" : "Ingen i databasen ennå";
         select.appendChild(optNone);
         availablePlayers.forEach(p=>{
           const opt = document.createElement("option");
-          opt.value = p.id;
-          opt.textContent = `${p.name} (${teamShort(p.team)}) £${p.price.toFixed(1)}m`;
+          opt.value = p.id; opt.textContent = `${p.name} (${teamShort(p.team)}) £${p.price.toFixed(1)}m`;
           if(slot.playerId === p.id) opt.selected = true;
           select.appendChild(opt);
         });
-        select.addEventListener("change", (e)=>{
-          slot.playerId = e.target.value ? Number(e.target.value) : null;
-          saveSquad(); renderAll();
-        });
+        select.addEventListener("change", (e)=>{ slot.playerId = e.target.value ? Number(e.target.value) : null; saveSquad(); renderAll(); });
         row.appendChild(select);
         const priceTag = document.createElement("div");
-        priceTag.className = "price-tag";
-        priceTag.textContent = "£" + slotPrice(slot).toFixed(1) + "m";
+        priceTag.className = "price-tag"; priceTag.textContent = "£" + slotPrice(slot).toFixed(1) + "m";
         row.appendChild(priceTag);
       } else {
         const nameInput = document.createElement("input");
@@ -731,15 +711,12 @@ function renderSquad(){
         saveSquad(); renderAll();
       });
 
-      wrapper.appendChild(row);
-      wrapper.appendChild(toggle);
-
+      wrapper.appendChild(row); wrapper.appendChild(toggle);
       if(!slot.manual && slot.playerId){
         const p = PLAYERS.find(pl=>pl.id===slot.playerId);
         if(p && p.status !== "a"){
           const flag = document.createElement("div");
-          flag.className = "slot-flag warn";
-          flag.textContent = "⚠ " + p.news;
+          flag.className = "slot-flag warn"; flag.textContent = "⚠ " + p.news;
           wrapper.appendChild(flag);
         }
       }
@@ -768,9 +745,10 @@ function renderBudget(){
   document.getElementById("spentVal").textContent = "£" + spent.toFixed(1) + "m";
   document.getElementById("bankVal").textContent = "£" + bank.toFixed(1) + "m";
   document.getElementById("filledVal").textContent = filled + " / 15";
-  const bankBox = document.getElementById("bankVal").parentElement;
-  bankBox.classList.toggle("over", bank < 0);
-  bankBox.classList.toggle("ok", bank >= 0);
+  const fill = document.getElementById("budgetBar");
+  const pct = Math.max(0, Math.min(100, (spent/100)*100));
+  fill.style.width = pct + "%";
+  fill.style.background = bank < 0 ? "var(--neg)" : "linear-gradient(90deg, var(--c-squad), #a58cae)";
   return bank;
 }
 
@@ -794,15 +772,23 @@ function renderTable(){
   });
   rows.forEach(p=>{
     const tr = document.createElement("tr");
-    const statusBadge = p.status === "a" ? `<span class="badge ok">OK</span>`
-      : `<span class="badge inj">Skadet</span><span class="news-txt">${p.news}</span>`;
+    const statusBadge = p.status === "a" ? `<span class="badge ok">OK</span>` : `<span class="badge inj">Skadet</span><span class="news-txt">${p.news}</span>`;
     const op = overperf(p);
     const opBadge = `<span class="badge ${op>=0.5?'neg':(op<=-0.5?'pos':'')}">${op>=0?'+':''}${op.toFixed(1)}</span>`;
     tr.innerHTML = `
-      <td>${p.name}</td><td>${p.posShort}</td><td>£${p.price.toFixed(1)}m</td>
-      <td>${p.pts}</td><td>${p.ppg.toFixed(1)}</td><td>${p.own.toFixed(1)}%</td>
-      <td>${p.xg.toFixed(2)}</td><td>${p.xa.toFixed(2)}</td><td>${p.xgi.toFixed(2)}</td>
-      <td>${xgiPerStart(p).toFixed(2)}</td><td>${p.xgc.toFixed(2)}</td><td>${opBadge}</td><td>${statusBadge}</td>
+      <td data-label="Navn"><div class="nm-cell">${avatarHtml(p)}<span>${p.name}</span></div></td>
+      <td data-label="Pos">${p.posShort}</td>
+      <td data-label="Pris">£${p.price.toFixed(1)}m</td>
+      <td data-label="Poeng ’25/26">${p.pts}</td>
+      <td data-label="P/kamp">${p.ppg.toFixed(1)}</td>
+      <td data-label="Eierskap">${p.own.toFixed(1)}%</td>
+      <td data-label="xG" class="mh">${p.xg.toFixed(2)}</td>
+      <td data-label="xA" class="mh">${p.xa.toFixed(2)}</td>
+      <td data-label="xGI" class="mh">${p.xgi.toFixed(2)}</td>
+      <td data-label="xGI/start" class="mh">${xgiPerStart(p).toFixed(2)}</td>
+      <td data-label="xGC" class="mh">${p.xgc.toFixed(2)}</td>
+      <td data-label="G+A vs xGI">${opBadge}</td>
+      <td data-label="Status">${statusBadge}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -817,9 +803,7 @@ document.querySelectorAll("#playerTable th").forEach(th=>{
 document.querySelectorAll(".filter-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    posFilter = btn.dataset.pos;
-    renderTable();
+    btn.classList.add("active"); posFilter = btn.dataset.pos; renderTable();
   });
 });
 document.getElementById("playerSearch").addEventListener("input", (e)=>{ searchTerm = e.target.value; renderTable(); });
@@ -827,33 +811,20 @@ document.getElementById("playerSearch").addEventListener("input", (e)=>{ searchT
 // ---- Tips ----
 function renderTips(){
   const outfield = PLAYERS.filter(p=>p.pos !== 1);
-
-  const diffs = [...outfield].filter(p=>p.own < 8 && p.starts >= 5)
-    .sort((a,b)=>xgiPerStart(b)-xgiPerStart(a)).slice(0,4);
-  document.getElementById("tipDiff").innerHTML = diffs.map(p=>
-    `<li><strong>${p.name}</strong> (${posOf(p.pos).short}) — ${xgiPerStart(p).toFixed(2)} xGI/start, kun ${p.own.toFixed(1)}% eierskap</li>`).join("") || "<li>Ingen kandidater ennå.</li>";
-
+  const diffs = [...outfield].filter(p=>p.own < 8 && p.starts >= 5).sort((a,b)=>xgiPerStart(b)-xgiPerStart(a)).slice(0,4);
+  document.getElementById("tipDiff").innerHTML = diffs.map(p=>`<li><strong>${p.name}</strong> (${posOf(p.pos).short}) — ${xgiPerStart(p).toFixed(2)} xGI/start, kun ${p.own.toFixed(1)}% eierskap</li>`).join("") || "<li>Ingen kandidater ennå.</li>";
   const over = [...outfield].filter(p=>p.starts>=5).sort((a,b)=>overperf(b)-overperf(a)).slice(0,4);
-  document.getElementById("tipOverperf").innerHTML = over.map(p=>
-    `<li><strong>${p.name}</strong> — ${p.goals+p.assists} scoringspoeng vs ${p.xgi.toFixed(1)} xGI (${overperf(p)>=0?'+':''}${overperf(p).toFixed(1)})</li>`).join("");
-
+  document.getElementById("tipOverperf").innerHTML = over.map(p=>`<li><strong>${p.name}</strong> — ${p.goals+p.assists} scoringspoeng vs ${p.xgi.toFixed(1)} xGI (${overperf(p)>=0?'+':''}${overperf(p).toFixed(1)})</li>`).join("");
   const under = [...outfield].filter(p=>p.starts>=5).sort((a,b)=>overperf(a)-overperf(b)).slice(0,4);
-  document.getElementById("tipUnderperf").innerHTML = under.map(p=>
-    `<li><strong>${p.name}</strong> — kun ${p.goals+p.assists} scoringspoeng vs ${p.xgi.toFixed(1)} xGI (${overperf(p).toFixed(1)})</li>`).join("");
-
+  document.getElementById("tipUnderperf").innerHTML = under.map(p=>`<li><strong>${p.name}</strong> — kun ${p.goals+p.assists} scoringspoeng vs ${p.xgi.toFixed(1)} xGI (${overperf(p).toFixed(1)})</li>`).join("");
   const def = PLAYERS.filter(p=>(p.pos===1||p.pos===2) && p.starts>=5).sort((a,b)=>xgcPerStart(a)-xgcPerStart(b)).slice(0,4);
-  document.getElementById("tipDefense").innerHTML = def.map(p=>
-    `<li><strong>${p.name}</strong> (${posOf(p.pos).short}) — ${xgcPerStart(p).toFixed(2)} xGC/start</li>`).join("");
-
+  document.getElementById("tipDefense").innerHTML = def.map(p=>`<li><strong>${p.name}</strong> (${posOf(p.pos).short}) — ${xgcPerStart(p).toFixed(2)} xGC/start</li>`).join("");
   const injured = PLAYERS.filter(p=>p.status !== "a");
-  document.getElementById("tipInjury").innerHTML = injured.length
-    ? injured.map(p=>`<li><strong>${p.name}</strong>: ${p.news}</li>`).join("")
-    : "<li>Ingen kjente skader for øyeblikket.</li>";
+  document.getElementById("tipInjury").innerHTML = injured.length ? injured.map(p=>`<li><strong>${p.name}</strong>: ${p.news}</li>`).join("") : "<li>Ingen kjente skader for øyeblikket.</li>";
 }
 
-// ---- Swap suggestions based on actual squad ----
+// ---- Swap suggestions ----
 function playerScore(p){
-  // Attacking-oriented score with defensive bonus for DEF/GKP
   let score = xgiPerStart(p) * 10;
   if(p.pos===1 || p.pos===2){ score += Math.max(0, 1.2 - xgcPerStart(p)) * 4; }
   if(p.status !== "a") score -= 5;
@@ -863,51 +834,32 @@ function renderSwapSuggestions(){
   const box = document.getElementById("swapSuggestions");
   const sp = squadPlayers();
   const bank = renderBudget();
-  if(sp.length === 0){
-    box.innerHTML = `<div class="muted">Fyll inn laget ditt under "Laget mitt" (velg spillere fra databasen, ikke manuelt) for å få byttesignaler her.</div>`;
-    return;
-  }
+  if(sp.length === 0){ box.innerHTML = `<div class="muted">Fyll inn laget ditt under "Laget mitt" (velg spillere fra databasen, ikke manuelt) for å få byttesignaler her.</div>`; return; }
   const squadIds = new Set(sp.map(p=>p.id));
-  let html = "";
-  let anySuggestion = false;
-
+  let html = ""; let anySuggestion = false;
   sp.forEach(p=>{
-    const reasons = [];
-    let flag = false;
+    const reasons = []; let flag = false;
     if(p.status !== "a"){ reasons.push(`Skadet: ${p.news}`); flag = true; }
     const op = overperf(p);
     if(op >= 2.5){ reasons.push(`Presterer godt over xG/xA (${op>=0?'+':''}${op.toFixed(1)}) — økt risiko for poengnedgang.`); flag = true; }
     if(xgiPerStart(p) < 0.12 && p.pos !== 1 && p.starts >= 5){ reasons.push(`Lav underliggende trussel: kun ${xgiPerStart(p).toFixed(2)} xGI per kamp startet.`); flag = true; }
-
     if(!flag) return;
     anySuggestion = true;
-
-    const budget = slotBudgetFor(p, bank);
-    const candidates = PLAYERS.filter(c=>c.pos===p.pos && !squadIds.has(c.id) && c.status==="a" && c.price <= budget)
-      .sort((a,b)=>playerScore(b)-playerScore(a)).slice(0,3);
-
+    const budget = bank + p.price;
+    const candidates = PLAYERS.filter(c=>c.pos===p.pos && !squadIds.has(c.id) && c.status==="a" && c.price <= budget).sort((a,b)=>playerScore(b)-playerScore(a)).slice(0,3);
     html += `<div class="swap-card">
       <div class="swap-head"><span class="swap-out">✖ ${p.name}</span><span class="swap-arrow">vurder å bytte ut</span></div>
       <div class="swap-reason">${reasons.join(" ")}</div>
       <div class="swap-candidates">
-        ${candidates.length ? candidates.map(c=>`<span class="candidate-chip">${c.name} · £${c.price.toFixed(1)}m · ${xgiPerStart(c).toFixed(2)} xGI/start</span>`).join("")
-          : `<span class="muted">Ingen ledige alternativer i databasen innenfor budsjett ennå — vurder å skrive inn en spiller manuelt.</span>`}
+        ${candidates.length ? candidates.map(c=>`<span class="candidate-chip">${c.name} · £${c.price.toFixed(1)}m · ${xgiPerStart(c).toFixed(2)} xGI/start</span>`).join("") : `<span class="muted">Ingen ledige alternativer i databasen innenfor budsjett ennå.</span>`}
       </div>
     </div>`;
   });
-
-  box.innerHTML = anySuggestion ? html : `<div class="muted">Ingen tydelige byttesignaler i laget ditt akkurat nå ut fra xG/xA og skadestatus.</div>`;
+  box.innerHTML = anySuggestion ? html : `<div class="muted">Ingen tydelige byttesignaler i laget ditt akkurat nå.</div>`;
 }
-function slotBudgetFor(p, bank){ return bank + p.price; }
 
 // ---- Transfers tab ----
-function loadTransferState(){
-  try{
-    const raw = localStorage.getItem(TRANSFER_KEY);
-    if(raw) return JSON.parse(raw);
-  }catch(e){}
-  return {free: 1, used: 0};
-}
+function loadTransferState(){ try{ const raw = localStorage.getItem(TRANSFER_KEY); if(raw) return JSON.parse(raw); }catch(e){} return {free: 1, used: 0}; }
 let transferState = loadTransferState();
 function saveTransferState(){ localStorage.setItem(TRANSFER_KEY, JSON.stringify(transferState)); }
 function renderTransferState(){
@@ -927,22 +879,14 @@ function saveLog(){ localStorage.setItem(LOG_KEY, JSON.stringify(transferLog)); 
 function renderLog(){
   const body = document.getElementById("transferLogBody");
   body.innerHTML = "";
-  if(transferLog.length === 0){
-    body.innerHTML = `<tr><td colspan="5" class="muted">Ingen rader ennå. Legges til automatisk etter GW1, eller loggfør selv.</td></tr>`;
-    return;
-  }
-  [...transferLog].sort((a,b)=>a.gw-b.gw).forEach((row, i)=>{
+  if(transferLog.length === 0){ body.innerHTML = `<tr><td colspan="5" class="muted">Ingen rader ennå.</td></tr>`; return; }
+  [...transferLog].sort((a,b)=>a.gw-b.gw).forEach((row)=>{
     const hit = Math.max(0, row.count - 1) * 4;
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>GW${row.gw}</td><td>${row.count}</td><td>${hit}</td><td>${row.note||""}</td><td><span class="btn-del" data-i="${transferLog.indexOf(row)}">Slett</span></td>`;
+    tr.innerHTML = `<td data-label="GW">GW${row.gw}</td><td data-label="Transfers">${row.count}</td><td data-label="Poengtrekk">${hit}</td><td data-label="Notat">${row.note||""}</td><td data-label=""><span class="btn-del" data-i="${transferLog.indexOf(row)}">Slett</span></td>`;
     body.appendChild(tr);
   });
-  body.querySelectorAll(".btn-del").forEach(el=>{
-    el.addEventListener("click", ()=>{
-      transferLog.splice(Number(el.dataset.i), 1);
-      saveLog(); renderLog();
-    });
-  });
+  body.querySelectorAll(".btn-del").forEach(el=>{ el.addEventListener("click", ()=>{ transferLog.splice(Number(el.dataset.i), 1); saveLog(); renderLog(); }); });
 }
 document.getElementById("logAddBtn").addEventListener("click", ()=>{
   const gw = Number(document.getElementById("logGw").value);
@@ -954,11 +898,7 @@ document.getElementById("logAddBtn").addEventListener("click", ()=>{
   document.getElementById("logGw").value = ""; document.getElementById("logCount").value = ""; document.getElementById("logNote").value = "";
 });
 
-function renderAll(){
-  renderSquad();
-  renderBudget();
-  renderSwapSuggestions();
-}
+function renderAll(){ renderSquad(); renderBudget(); renderSwapSuggestions(); }
 
 renderCountdown();
 renderAll();
@@ -966,7 +906,7 @@ renderTable();
 renderTips();
 renderTransferState();
 renderLog();
-document.getElementById("syncTime").textContent = new Date().toLocaleString("no-NO", {dateStyle:"long", timeStyle:"short"});
+document.getElementById("syncTime").textContent = new Date().toLocaleString("no-NO", {dateStyle:"medium", timeStyle:"short"});
 setInterval(renderCountdown, 3600000);
 </script>
 </body>
